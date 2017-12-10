@@ -9,6 +9,11 @@ namespace Technoguyfication.IMGEditor.Shared
 	public static class Shared
 	{
 		/// <summary>
+		/// Size of a data sector, in bytes
+		/// </summary>
+		public const int SECTOR_SIZE = 2048;
+
+		/// <summary>
 		/// Reverse order of bytes if the <see cref="BitConverter"/> is big-endian.
 		/// </summary>
 		/// <returns>Reversed bytes</returns>
