@@ -193,17 +193,21 @@ namespace Technoguyfication.IMGEditor.CLI
 		{
 			var builder = new StringBuilder($"Techno's IMG Editor (v{Assembly.GetExecutingAssembly().GetName().Version.ToString()}) for Grand Theft Auto III/VC/SA/IV\n\n");
 
+			builder.AppendLine("Drag n' drop an IMG archive to extract it.");
+			builder.AppendLine("Drag n' drop a folder to turn it into an IMG archive.");
+
 			// extract
-			builder.AppendLine("Extract all files from an archive:");
+			builder.AppendLine("\nExtract all files from an archive:");
 			builder.AppendLine($"  > {AssemblyName} extract (IMG file path) (output path)");
 
+			// add
 			builder.AppendLine("\nAdd a file to an archive:");
 			builder.AppendLine($" > {AssemblyName} add (IMG file path) (file to add) [file name (default is original file name)]");
 
 			builder.AppendLine("\nAdvanced commands:");
 
 			// bump entries
-			builder.AppendLine("\nMove X file entries from top to bottom of IMG archive: (for making more directory space)");
+			builder.AppendLine("\nMove file entries from the top to the bottom of an IMG archive for making more directory space:");
 			builder.AppendLine($"  > {AssemblyName} bump (IMG file path) [amount of entries (default 1)]");
 
 			Console.WriteLine(builder);
