@@ -9,7 +9,7 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 	/// <summary>
 	/// Represents a file directory entry - https://www.gtamodding.com/wiki/IMG_archive#Directory_Entry_2
 	/// </summary>
-	public struct DirectoryEntry
+	public class DirectoryEntry
 	{
 		/// <summary>
 		/// The offset of the data (in sectors)
@@ -46,7 +46,7 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 			builder.AddRange(Encoding.ASCII.GetBytes(Name));
 
 			// fill the rest of the string with null bytes
-			builder.AddRange(new byte[IMGFileVer2.DIR_ENTRY_SIZE - builder.Count]);
+			builder.AddRange(new byte[IMGFileVer2.DIRECTORY_ITEM_SIZE - builder.Count]);
 
 			return builder.ToArray();
 		}
@@ -69,6 +69,36 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 				$"Streaming Size: {StreamingSize} Sectors ({StreamingSize * 2048} Bytes)\n" +
 				$"Size: {Size} Sectors ({Size * 2048} Bytes)\n" +
 				$"Name: {Name}";
+		}
+
+		/// <summary>
+		/// Create a directory entry from an array of 32 bytes
+		/// </summary>
+		/// <param name="bytes">An array containing exactly 32 bytes</param>
+		/// <returns></returns>
+		public static DirectoryEntry FromBytes(byte[] bytes)
+		{
+			if (bytes.Length != 32)
+			{
+				throw new ArgumentException("Invalid input buffer size. Must be 32 bytes.");
+			}
+
+			// convert bytes to actual values
+			byte[] offsetBytes = bytes.SubArray(0, 4);
+			byte[] streamingSizeBytes = bytes.SubArray(4, 2);
+			byte[] sizeBytes = bytes.SubArray(6, 2);
+			byte[] nameBytes = bytes.SubArray(8, 24);
+
+			// create a new entry
+			DirectoryEntry entry = new DirectoryEntry
+			{
+				Offset = BitConverter.ToUInt32(offsetBytes.ReverseIfBigEndian(), 0),
+				StreamingSize = BitConverter.ToUInt16(streamingSizeBytes.ReverseIfBigEndian(), 0),
+				Size = BitConverter.ToUInt16(sizeBytes.ReverseIfBigEndian(), 0),
+				Name = nameBytes.ToNullTerminatedString()
+			};
+
+			return entry;
 		}
 	}
 }

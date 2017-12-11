@@ -20,16 +20,16 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <summary>
 		/// Size of a directory entry, in bytes
 		/// </summary>
-		public const int DIR_ENTRY_SIZE = 32;
+		public const int DIRECTORY_ITEM_SIZE = 32;
 
 		/// <summary>
 		/// Number of entries in the directory
 		/// </summary>
-		public ushort EntryCount
+		public ushort FileCount
 		{
 			get
 			{
-				byte[] len = new byte[2];
+				byte[] length = new byte[2];
 
 				// read from the file stream and reset
 				// seek position to original location (incase this is used while writing data elsewhere)
@@ -38,23 +38,25 @@ namespace Technoguyfication.IMGEditor.Shared
 					long originalPos = _fileStream.Position;
 
 					_fileStream.Seek(4, SeekOrigin.Begin);
-					_fileStream.Read(len, 0, 2);
+					_fileStream.Read(length, 0, 2);
 					_fileStream.Seek(originalPos, SeekOrigin.Begin);
 				}
 
-				return BitConverter.ToUInt16(len.ReverseIfBigEndian(), 0);
+				return BitConverter.ToUInt16(length.ReverseIfBigEndian(), 0);
 			}
 			set
 			{
-				byte[] len = new byte[2];
-				len = BitConverter.GetBytes(value).ReverseIfBigEndian();
+				// get new length in bytes
+				byte[] length = new byte[2];
+				length = BitConverter.GetBytes(value).ReverseIfBigEndian();
 
 				lock (_fileStream)
 				{
 					long originalPos = _fileStream.Position;
 
+					// write to file and seek to original location
 					_fileStream.Seek(0, SeekOrigin.Begin);
-					_fileStream.Write(len, 0, 2);
+					_fileStream.Write(length, 0, 2);
 					_fileStream.Seek(originalPos, SeekOrigin.Begin);
 				}
 			}
@@ -80,7 +82,7 @@ namespace Technoguyfication.IMGEditor.Shared
 			lock (_fileStream)
 			{
 				_fileStream.Seek(8, SeekOrigin.Begin);
-				int numEntries = EntryCount;
+				int numEntries = FileCount;
 
 				for (int i = 0; i < numEntries; i++)
 				{
@@ -99,33 +101,19 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <exception cref="InvalidDirectoryEntryException"></exception>
 		public DirectoryEntry GetDirectoryEntry(ushort index)
 		{
-			if (index >= EntryCount)
+			if (index >= FileCount)
 				throw new InvalidDirectoryEntryException();
 
-			byte[] entryBytes = new byte[DIR_ENTRY_SIZE];
+			byte[] entryBytes = new byte[DIRECTORY_ITEM_SIZE];
 
 			// read from file
 			lock (_fileStream)
 			{
-				_fileStream.Position = 8 + (DIR_ENTRY_SIZE * index);
-				_fileStream.Read(entryBytes, 0, DIR_ENTRY_SIZE);
+				_fileStream.Position = 8 + (DIRECTORY_ITEM_SIZE * index);
+				_fileStream.Read(entryBytes, 0, DIRECTORY_ITEM_SIZE);
 			}
 
-			// convert bytes to actual values
-			byte[] offsetBytes = entryBytes.SubArray(0, 4);
-			byte[] streamingSizeBytes = entryBytes.SubArray(4, 2);
-			byte[] sizeBytes = entryBytes.SubArray(6, 2);
-			byte[] nameBytes = entryBytes.SubArray(8, 24);
-
-			DirectoryEntry entry = new DirectoryEntry
-			{
-				Offset = BitConverter.ToUInt32(offsetBytes.ReverseIfBigEndian(), 0),
-				StreamingSize = BitConverter.ToUInt16(streamingSizeBytes.ReverseIfBigEndian(), 0),
-				Size = BitConverter.ToUInt16(sizeBytes.ReverseIfBigEndian(), 0),
-				Name = nameBytes.ToNullTerminatedString()
-			};
-
-			return entry;
+			return DirectoryEntry.FromBytes(entryBytes);
 		}
 
 		/// <summary>
@@ -144,7 +132,7 @@ namespace Technoguyfication.IMGEditor.Shared
 				uint firstSector = entries[0].Offset;
 				ulong dataStart = firstSector * SECTOR_SIZE;
 
-				if (dataStart <= (ulong)((EntryCount + 1) * DIR_ENTRY_SIZE) + 8)
+				if (dataStart <= (ulong)((FileCount + 1) * DIRECTORY_ITEM_SIZE) + 8)
 				{
 					// need to move the first sector to the back
 				}
@@ -152,21 +140,21 @@ namespace Technoguyfication.IMGEditor.Shared
 		}
 
 		/// <summary>
-		/// Sends x amount of file entries to the back of the archive, for expanding the directory
+		/// Sends directory entries from the beginning of the directory list to the end, moving their data. Useful for making more space for appending directory entries.
 		/// </summary>
-		public void SendFilesToBack(int amount)
+		public void Bump(int amount)
 		{
-			if (EntryCount < 1) // what's the point of shifting nothing back?
+			if (FileCount < 1) // what's the point of shifting nothing back?
 				return;
 
-			if (EntryCount < amount)
+			if (FileCount < amount)
 				throw new InvalidDirectoryEntryException("Cannot shift more than the amount of existing files.");
 
 			lock (_fileStream)
 			{
 				for (int i = 0; i < amount; i++)
 				{
-					ushort entryCount = EntryCount;
+					ushort entryCount = FileCount;
 
 					// get position of first file data
 					var firstEntry = GetDirectoryEntry(0);
@@ -203,23 +191,23 @@ namespace Technoguyfication.IMGEditor.Shared
 					// yeah we don't need to do this, but it could cause issues with other
 					// applications that aren't written as well
 
-					buffer = new byte[DIR_ENTRY_SIZE];
+					buffer = new byte[DIRECTORY_ITEM_SIZE];
 
 					// start at second entry (the first got shifted)
 					for (int j = 1; j < entryCount; j++)
 					{
 						// read entry into buffer
-						_fileStream.Seek((j * DIR_ENTRY_SIZE) + 8, SeekOrigin.Begin);
-						_fileStream.Read(buffer, 0, DIR_ENTRY_SIZE);
+						_fileStream.Seek((j * DIRECTORY_ITEM_SIZE) + 8, SeekOrigin.Begin);
+						_fileStream.Read(buffer, 0, DIRECTORY_ITEM_SIZE);
 
 						// write entry to space before it
-						_fileStream.Seek(((j - 1) * DIR_ENTRY_SIZE) + 8, SeekOrigin.Begin);
-						_fileStream.Write(buffer, 0, DIR_ENTRY_SIZE);
+						_fileStream.Seek(((j - 1) * DIRECTORY_ITEM_SIZE) + 8, SeekOrigin.Begin);
+						_fileStream.Write(buffer, 0, DIRECTORY_ITEM_SIZE);
 					}
 
 					// write moved entry to end of directory
-					_fileStream.Seek(((entryCount - 1) * DIR_ENTRY_SIZE) + 8, SeekOrigin.Begin);
-					_fileStream.Write(firstEntry.GetBytes(), 0, DIR_ENTRY_SIZE);
+					_fileStream.Seek(((entryCount - 1) * DIRECTORY_ITEM_SIZE) + 8, SeekOrigin.Begin);
+					_fileStream.Write(firstEntry.GetBytes(), 0, DIRECTORY_ITEM_SIZE);
 					_fileStream.Flush();
 				}
 			}

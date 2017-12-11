@@ -85,7 +85,7 @@ namespace Technoguyfication.IMGEditor.CLI
 					// perform the edit
 					try
 					{
-						file.SendFilesToBack(amount);
+						file.Bump(amount);
 					}
 					catch (Exception ex)
 					{
