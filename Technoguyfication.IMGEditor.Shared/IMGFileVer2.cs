@@ -15,6 +15,12 @@ namespace Technoguyfication.IMGEditor.Shared
 	public class IMGFileVer2
 	{
 		private FileStream _fileStream;
+		private string _filePath;
+
+		/// <summary>
+		/// Gets the FileInfo for the IMG Archive
+		/// </summary>
+		public FileInfo FileInfo { get; private set; }
 
 		/// <summary>
 		/// Size of an archive sector, in bytes
@@ -77,7 +83,9 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <param name="filePath"></param>
 		public IMGFileVer2(string filePath)
 		{
+			_filePath = filePath;
 			_fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+			FileInfo = new FileInfo(_filePath);
 		}
 
 		/// <summary>

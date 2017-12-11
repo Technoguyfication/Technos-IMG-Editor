@@ -181,6 +181,25 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.WriteLine($"Extracted {imgfile.FileCount} files from archive.");
 						return true;
 					}
+				case "info":
+					{
+						if (args.Length < 2)
+							return false;
+
+						string imgFilePath = args[1];
+
+						IMGFileVer2 imgFile = AttemptToOpenImgFile(imgFilePath);
+						if (imgFile == null)
+							return true;
+
+						float filesizeMB = imgFile.FileInfo.Length / 1E6f;
+
+						Console.WriteLine($"{Path.GetFileName(imgFilePath)}:\n" +
+							$"  File Count: {imgFile.FileCount}\n" +
+							$"  Size: {filesizeMB.ToString("0.00")}MB");
+
+						return true;
+					}
 			}
 
 			return false;
@@ -203,6 +222,10 @@ namespace Technoguyfication.IMGEditor.CLI
 			// add
 			builder.AppendLine("\nAdd a file to an archive:");
 			builder.AppendLine($" > {AssemblyName} add (IMG file path) (file to add) [file name (default is original file name)]");
+
+			// info
+			builder.AppendLine("\nGet info on an archive:");
+			builder.AppendLine($" > {AssemblyName} info (IMG file path)");
 
 			builder.AppendLine("\nAdvanced commands:");
 
