@@ -138,7 +138,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// </summary>
 		/// <param name="fileName"></param>
 		/// <param name="fileContents"></param>
-		public void AddFile(string fileName, byte[] fileContents)
+		public void AddFile(string fileName, FileStream newFile)
 		{
 			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
 				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
@@ -159,24 +159,25 @@ namespace Technoguyfication.IMGEditor.Shared
 					Bump(1);
 
 				// find the amount of new sectors we need
-				int newSectorCount = fileContents.Length / SECTOR_SIZE;
-				if (fileContents.Length % SECTOR_SIZE != 0)
+				int newSectorCount = (int)(newFile.Length / SECTOR_SIZE);
+				if (newFile.Length % SECTOR_SIZE != 0)
 					newSectorCount++;
-
-				// TODO: do this in steps of one sector each to decrease memory usage
-
-				// create a new buffer for data which contains the full sector(s) size and copy our data into it
-				byte[] buffer = new byte[newSectorCount * SECTOR_SIZE];
-				Array.Copy(fileContents, buffer, fileContents.Length);
 
 				// get the position of the end of the first free sector
 				uint endDataFirstSector = entries.Last().Offset + entries.Last().GetSize();
-				long endDataStart = endDataFirstSector * SECTOR_SIZE;
 
-				// write the data buffer into the file
-				_fileStream.Seek(endDataStart, SeekOrigin.Begin);
-				_fileStream.Write(buffer, 0, buffer.Length);
-				_fileStream.Flush();
+				// create a buffer to copy one sector of data at a time
+				byte[] buffer = new byte[SECTOR_SIZE];
+
+				// copy each sector of data
+				for (int i = 0; i < newSectorCount; i++)
+				{
+					newFile.Read(buffer, 0, SECTOR_SIZE);
+					_fileStream.Seek((endDataFirstSector + i) * SECTOR_SIZE, SeekOrigin.Begin);
+					_fileStream.Write(buffer, 0, SECTOR_SIZE);
+
+					_fileStream.Flush();
+				}
 
 				// create a new directory entry
 				DirectoryEntry entry = new DirectoryEntry()

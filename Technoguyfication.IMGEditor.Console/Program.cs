@@ -127,17 +127,9 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						// load file into buffer
 						FileStream fileStream = File.OpenRead(filePath);
-						byte[] buffer = new byte[fileStream.Length];
+						file.AddFile(archiveFileName, fileStream);
 
-						int bytesRead = 0;
-						while (bytesRead < buffer.Length)
-						{
-							bytesRead += fileStream.Read(buffer, bytesRead, buffer.Length - bytesRead);
-						}
-
-						file.AddFile(archiveFileName, buffer);
-
-						Console.WriteLine($"Added file {archiveFileName} ({buffer.Length} bytes) to {Path.GetFileName(archivePath)}");
+						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
 					}
 				case "extract":
