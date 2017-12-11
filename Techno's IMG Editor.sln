@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Technoguyfication.IMGEditor.Shared", "Technoguyfication.IMGEditor.Shared\Technoguyfication.IMGEditor.Shared.csproj", "{90E5A277-24B9-4A9E-B97C-D523D585CB0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Technoguyfication.IMGEditor.Shared\Shared.csproj", "{90E5A277-24B9-4A9E-B97C-D523D585CB0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Technoguyfication.IMGEditor.Console\Console.csproj", "{13FA3B36-C5EA-45FC-BD0A-663CC33F61EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{90E5A277-24B9-4A9E-B97C-D523D585CB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90E5A277-24B9-4A9E-B97C-D523D585CB0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90E5A277-24B9-4A9E-B97C-D523D585CB0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13FA3B36-C5EA-45FC-BD0A-663CC33F61EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13FA3B36-C5EA-45FC-BD0A-663CC33F61EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13FA3B36-C5EA-45FC-BD0A-663CC33F61EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13FA3B36-C5EA-45FC-BD0A-663CC33F61EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

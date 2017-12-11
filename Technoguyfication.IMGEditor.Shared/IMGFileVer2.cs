@@ -60,6 +60,10 @@ namespace Technoguyfication.IMGEditor.Shared
 			}
 		}
 
+		/// <summary>
+		/// Creates a new IMG File instance
+		/// </summary>
+		/// <param name="filePath"></param>
 		public IMGFileVer2(string filePath)
 		{
 			_fileStream = new FileStream(filePath, FileMode.Open);
