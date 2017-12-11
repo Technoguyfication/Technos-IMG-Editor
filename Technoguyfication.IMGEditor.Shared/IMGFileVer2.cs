@@ -55,7 +55,7 @@ namespace Technoguyfication.IMGEditor.Shared
 					long originalPos = _fileStream.Position;
 
 					// write to file and seek to original location
-					_fileStream.Seek(0, SeekOrigin.Begin);
+					_fileStream.Seek(4, SeekOrigin.Begin);
 					_fileStream.Write(length, 0, 2);
 					_fileStream.Seek(originalPos, SeekOrigin.Begin);
 				}
