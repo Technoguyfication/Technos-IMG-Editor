@@ -28,9 +28,24 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 		public ushort Size { get; set; }
 
 		/// <summary>
-		/// Name of the file the data represents
+		/// Name of the file the data represents, cannot be longer than 23 bytes
 		/// </summary>
-		public string Name { get; set; }
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+			set
+			{
+				// name takes at max. 24 bytes, with last one reserved for null terminator
+				if (Encoding.ASCII.GetByteCount(value) > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)
+					throw new Exception($"Name cannot be longer than {IMGFileVer2.MAX_DIRECTORY_FILE_NAME} bytes.");
+
+				_name = value;
+			}
+		}
+		private string _name;
 
 		/// <summary>
 		/// Serialize the directory entry to an array of bytes

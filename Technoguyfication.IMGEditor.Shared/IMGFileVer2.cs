@@ -27,6 +27,11 @@ namespace Technoguyfication.IMGEditor.Shared
 		public const int DIRECTORY_ITEM_SIZE = 32;
 
 		/// <summary>
+		/// The maximum size of a directory file name, in bytes
+		/// </summary>
+		public const int MAX_DIRECTORY_FILE_NAME = 23;
+
+		/// <summary>
 		/// Number of entries in the directory
 		/// </summary>
 		public ushort FileCount
@@ -127,6 +132,9 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <param name="fileContents"></param>
 		public void AddFile(string fileName, byte[] fileContents)
 		{
+			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
+				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
+
 			lock (_fileStream)
 			{
 				// find first sector containing data
