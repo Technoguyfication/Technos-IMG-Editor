@@ -55,17 +55,46 @@ namespace Technoguyfication.IMGEditor.CLI
 					int amount = 1;
 
 					// attempt to parse bump amount
-					if (args.Length > 1)
-						if (!int.TryParse(args[1], out amount))
+					if (args.Length > 2)
+						if (!int.TryParse(args[2], out amount))
 							return false;
 
 					// open file
 					IMGFileVer2 file;
+					string filePath = args[1];
 					try
 					{
-						file = new IMGFileVer2(args[0]);
+						file = new IMGFileVer2(filePath);
+					}
+					catch (FileNotFoundException)
+					{
+						Console.WriteLine($"File \"{filePath}\" not found.");
+						return true;
+					}
+					catch (IOException ex)
+					{
+						Console.WriteLine($"Error opening file:\n{ex.Message}");
+						return true;
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Unhandled exception opening file: {ex}");
+						return true;
 					}
 
+					// perform the edit
+					try
+					{
+						file.SendFilesToBack(amount);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Unhandled exception occured while editing the file. It may be corrupted.\n{ex}");
+						return true;
+					}
+
+					// end
+					Console.WriteLine($"Successfully bumped {amount} entries from beginning of {Path.GetFileName(filePath)} to the end, freeing up {amount * IMGFileVer2.SECTOR_SIZE} bytes for directory entries.");
 					return true;
 			}
 

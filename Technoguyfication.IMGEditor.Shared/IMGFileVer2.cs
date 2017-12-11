@@ -66,7 +66,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <param name="filePath"></param>
 		public IMGFileVer2(string filePath)
 		{
-			_fileStream = new FileStream(filePath, FileMode.Open);
+			_fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// </summary>
 		public void SendFilesToBack(int amount)
 		{
-			if (EntryCount < 1)	// what's the point of shifting nothing back?
+			if (EntryCount < 1) // what's the point of shifting nothing back?
 				return;
 
 			if (EntryCount < amount)
@@ -180,24 +180,24 @@ namespace Technoguyfication.IMGEditor.Shared
 					for (int j = 0; j < firstEntry.GetSize(); j++)
 					{
 						// read sector into buffer
-						_fileStream.Seek(firstEntry.Offset * SECTOR_SIZE, SeekOrigin.Begin);
+						_fileStream.Seek((firstEntry.Offset + j) * SECTOR_SIZE, SeekOrigin.Begin);
 						_fileStream.Read(buffer, 0, SECTOR_SIZE);
 
 						// write sector to end of file
-						_fileStream.Seek((lastSectorEnd) * SECTOR_SIZE, SeekOrigin.Begin);
+						_fileStream.Seek((lastSectorEnd + j) * SECTOR_SIZE, SeekOrigin.Begin);
 						_fileStream.Write(buffer, 0, SECTOR_SIZE);
 
 						_fileStream.Flush();
 
 						// overwrite old sector location with 0
-						_fileStream.Seek(firstEntry.Offset * SECTOR_SIZE, SeekOrigin.Begin);
+						_fileStream.Seek((firstEntry.Offset + j) * SECTOR_SIZE, SeekOrigin.Begin);
 						_fileStream.Write(new byte[SECTOR_SIZE], 0, SECTOR_SIZE);
 
 						_fileStream.Flush();
 					}
 
 					// change original file offset
-					firstEntry.Offset = lastSectorEnd / SECTOR_SIZE;
+					firstEntry.Offset = lastSectorEnd;
 
 					// shift the entire directoy index up and rewrite the file to the end of it
 					// yeah we don't need to do this, but it could cause issues with other
