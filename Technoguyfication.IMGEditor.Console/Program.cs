@@ -140,6 +140,47 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.WriteLine($"Added file {archiveFileName} ({buffer.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
 					}
+				case "extract":
+					{
+						if (args.Length < 3)
+							return false;
+
+						string archivePath = args[1];
+						string outputPath = args[2];
+
+						// open img file
+						IMGFileVer2 imgfile = AttemptToOpenImgFile(archivePath);
+						if (imgfile == null)
+							return true;
+
+						try
+						{
+							Directory.CreateDirectory(outputPath);
+						}
+						catch (PathTooLongException)
+						{
+							Console.WriteLine("The output path you specified was too long.");
+							return true;
+						}
+						catch (Exception ex)
+						{
+							Console.WriteLine($"Unhandled exception creating output directory:\n{ex}");
+							return true;
+						}
+
+						var files = imgfile.GetDirectoryEntries();
+
+						foreach (var file in files)
+						{
+							var stream = File.Create(Path.Combine(outputPath, file.Name));
+
+							byte[] buffer = imgfile.GetFile(file);
+							stream.Write(buffer, 0, buffer.Length);
+						}
+
+						Console.WriteLine($"Extracted {imgfile.FileCount} files from archive.");
+						return true;
+					}
 			}
 
 			return false;

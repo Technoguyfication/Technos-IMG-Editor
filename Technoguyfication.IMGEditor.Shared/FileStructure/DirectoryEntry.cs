@@ -116,5 +116,15 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 
 			return entry;
 		}
+
+		public override bool Equals(object obj)
+		{
+			return GetHashCode() == obj.GetHashCode();
+		}
+
+		public override int GetHashCode()
+		{
+			return ToString().GetHashCode();
+		}
 	}
 }

@@ -192,6 +192,32 @@ namespace Technoguyfication.IMGEditor.Shared
 		}
 
 		/// <summary>
+		/// Gets a file from the archive
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns></returns>
+		public byte[] GetFile(DirectoryEntry file)
+		{
+			lock (_fileStream)
+			{
+				if (!GetDirectoryEntries().Contains(file))
+					throw new ArgumentException("File is not contained inside the archive.");
+
+				byte[] buffer = new byte[file.GetSize() * SECTOR_SIZE];
+
+				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
+
+				int bytesRead = 0;
+				while (bytesRead < buffer.Length)
+				{
+					bytesRead += _fileStream.Read(buffer, bytesRead, buffer.Length - bytesRead);
+				}
+
+				return buffer;
+			}
+		}
+
+		/// <summary>
 		/// Sends directory entries from the beginning of the directory list to the end, moving their data. Useful for making more space for appending directory entries.
 		/// </summary>
 		public void Bump(int amount)
