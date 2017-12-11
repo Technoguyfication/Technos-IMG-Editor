@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Technoguyfication.IMGEditor.Shared.FileStructure
 {
 	/// <summary>
-	/// Represents a file directory entry - https://www.gtamodding.com/wiki/IMG_archive#Directory_Entry_2
+	/// Represents a file directory entry
+	/// https://www.gtamodding.com/wiki/IMG_archive#Directory_Entry_2
 	/// </summary>
 	public class DirectoryEntry
 	{

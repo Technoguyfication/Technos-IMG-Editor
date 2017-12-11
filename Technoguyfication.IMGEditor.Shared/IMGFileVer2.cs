@@ -8,6 +8,10 @@ using Technoguyfication.IMGEditor.Shared.FileStructure;
 
 namespace Technoguyfication.IMGEditor.Shared
 {
+	/// <summary>
+	/// Represents a Version 2 IMG archive
+	/// https://www.gtamodding.com/wiki/IMG_archive#Version_2_-_GTA_SA
+	/// </summary>
 	public class IMGFileVer2
 	{
 		private FileStream _fileStream;
@@ -127,15 +131,55 @@ namespace Technoguyfication.IMGEditor.Shared
 			{
 				// find first sector containing data
 				var entries = GetDirectoryEntries();
+
+				// sort by data start ascending
 				entries.Sort((a, b) => { return (int)(a.Offset - b.Offset); });
 
 				uint firstSector = entries[0].Offset;
-				ulong dataStart = firstSector * SECTOR_SIZE;
+				long dataStart = firstSector * SECTOR_SIZE;
 
-				if (dataStart <= (ulong)((FileCount + 1) * DIRECTORY_ITEM_SIZE) + 8)
+				// bump the first file if we don't have enough space to fit the entry
+				if (dataStart <= ((FileCount + 1) * DIRECTORY_ITEM_SIZE) + 8)
+					Bump(1);
+
+				// find the amount of new sectors we need
+				int newSectorCount = fileContents.Length / SECTOR_SIZE;
+				if (fileContents.Length % SECTOR_SIZE != 0)
+					newSectorCount++;
+
+				// TODO: do this in steps of one sector each to decrease memory usage
+
+				// create a new buffer for data which contains the full sector(s) size and copy our data into it
+				byte[] buffer = new byte[newSectorCount * SECTOR_SIZE];
+				Array.Copy(fileContents, buffer, fileContents.Length);
+
+				// get the position of the end of the first free sector
+				uint endDataFirstSector = entries.Last().Offset + entries.Last().GetSize();
+				long endDataStart = endDataFirstSector * SECTOR_SIZE;
+
+				// write the data buffer into the file
+				_fileStream.Seek(endDataStart, SeekOrigin.Begin);
+				_fileStream.Write(buffer, 0, buffer.Length);
+				_fileStream.Flush();
+
+				// create a new directory entry
+				DirectoryEntry entry = new DirectoryEntry()
 				{
-					// need to move the first sector to the back
-				}
+					Name = fileName,
+					StreamingSize = (ushort)newSectorCount,
+					Offset = endDataFirstSector
+				};
+
+				// write the directory entry
+				uint directoryEntryStart = (uint)((FileCount) * DIRECTORY_ITEM_SIZE) + 8;
+
+				_fileStream.Seek(directoryEntryStart, SeekOrigin.Begin);
+				_fileStream.Write(entry.GetBytes(), 0, DIRECTORY_ITEM_SIZE);
+
+				FileCount = (ushort)(FileCount + 1);
+
+				// done!
+				_fileStream.Flush();
 			}
 		}
 
