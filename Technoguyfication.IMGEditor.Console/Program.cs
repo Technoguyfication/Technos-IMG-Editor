@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Technoguyfication.IMGEditor.Shared;
+using System.Diagnostics;
 
 namespace Technoguyfication.IMGEditor.CLI
 {
@@ -127,7 +128,7 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						// load file into buffer
 						FileStream fileStream = File.OpenRead(filePath);
-						file.AddFile(archiveFileName, fileStream);
+						file.AddFile(archiveFileName, fileStream, fileStream.Length);
 
 						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
@@ -192,6 +193,64 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						return true;
 					}
+				case "defrag":
+					{
+						if (args.Length < 2)
+							return false;
+
+						// open archive
+						string imgFilePath = args[1];
+						IMGFileVer2 imgFile = AttemptToOpenImgFile(imgFilePath);
+						if (imgFile == null)
+							return true;
+
+						// confirm that the user wants to defragment
+						Console.Write("Warning: Defragmenting may take a very long time to complete, with minimal benefits. Please only proceed if you have good reason.\n\n" +
+							"Type \"yes\" to continue, or anything else to abort.\n" +
+							" >");
+
+						string response = Console.ReadLine().Trim().ToLower();
+						if (response != "yes")
+						{
+							Console.WriteLine("Aborting.");
+							return true;
+						}
+
+						Console.Write("\n[ ");
+
+						var watch = Stopwatch.StartNew();
+						int lastPercent = 0;
+
+						// defragment the file
+						imgFile.Defragment(new Progress<ProgressUpdate>(displayProgressUpdate));
+
+						watch.Stop();
+
+						Console.WriteLine($"]\n\nFinished defragmenting. Took {watch.Elapsed.ToString()}.");
+						
+						return true;
+
+						void displayProgressUpdate(ProgressUpdate update)
+						{
+							if (update.Type == ProgressUpdateType.STRING)
+							{
+								Console.WriteLine(update.Message);
+								return;
+							}
+							else if (update.Type == ProgressUpdateType.NUMERICAL)
+							{
+								if (lastPercent == update.GetPercent())
+									return;
+
+								if (update.GetPercent() % 10 == 0)
+									Console.Write($" {update.GetPercent()}% ");
+								else if (update.GetPercent() % 2 == 0)
+									Console.Write(".");
+
+								lastPercent = update.GetPercent();
+							}
+						}
+					}
 			}
 
 			return false;
@@ -218,6 +277,10 @@ namespace Technoguyfication.IMGEditor.CLI
 			// info
 			builder.AppendLine("\nGet info on an archive:");
 			builder.AppendLine($" > {AssemblyName} info (IMG file path)");
+
+			// defrag
+			builder.AppendLine("\nDefragment an IMG archive:");
+			builder.AppendLine($" > {AssemblyName} defrag (IMG file path)");
 
 			builder.AppendLine("\nAdvanced commands:");
 

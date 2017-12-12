@@ -12,7 +12,7 @@ namespace Technoguyfication.IMGEditor.Shared
 	/// Represents a Version 2 IMG archive
 	/// https://www.gtamodding.com/wiki/IMG_archive#Version_2_-_GTA_SA
 	/// </summary>
-	public class IMGFileVer2
+	public class IMGFileVer2 : IDisposable
 	{
 		private FileStream _fileStream;
 		private string _filePath;
@@ -36,6 +36,11 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// The maximum size of a directory file name, in bytes
 		/// </summary>
 		public const int MAX_DIRECTORY_FILE_NAME = 23;
+
+		/// <summary>
+		/// The header at the beginning 4 bytes of all VER2 archives
+		/// </summary>
+		public static readonly byte[] HEADER = new byte[] { 0x56, 0x45, 0x52, 0x32 };
 
 		/// <summary>
 		/// Number of entries in the directory
@@ -88,6 +93,19 @@ namespace Technoguyfication.IMGEditor.Shared
 			FileInfo = new FileInfo(_filePath);
 		}
 
+		~IMGFileVer2()
+		{
+			Dispose();
+		}
+
+		/// <summary>
+		/// Disposes the class and releases all resources
+		/// </summary>
+		public void Dispose()
+		{
+			_fileStream?.Dispose();
+		}
+
 		/// <summary>
 		/// Enumerates all the directory entries in the file and returns them in a List
 		/// </summary>
@@ -138,10 +156,13 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// </summary>
 		/// <param name="fileName"></param>
 		/// <param name="fileContents"></param>
-		public void AddFile(string fileName, FileStream newFile)
+		public void AddFile(string fileName, FileStream newFile, long length, long offset = 0)
 		{
 			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
 				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
+
+			if (length + offset > newFile.Length)
+				throw new ArgumentException("Data to read exceeds file size");
 
 			lock (_fileStream)
 			{
@@ -151,7 +172,14 @@ namespace Technoguyfication.IMGEditor.Shared
 				// sort by data start ascending
 				entries.Sort((a, b) => { return (int)(a.Offset - b.Offset); });
 
-				uint firstSector = entries[0].Offset;
+				uint firstSector;
+
+				// if it's an empty archive, start at the second sector
+				if (entries.Count > 0)
+					firstSector = entries[0].Offset;
+				else
+					firstSector = 1;    // zero-indexed
+
 				long dataStart = firstSector * SECTOR_SIZE;
 
 				// bump the first file if we don't have enough space to fit the entry
@@ -159,15 +187,22 @@ namespace Technoguyfication.IMGEditor.Shared
 					Bump(1);
 
 				// find the amount of new sectors we need
-				int newSectorCount = (int)(newFile.Length / SECTOR_SIZE);
-				if (newFile.Length % SECTOR_SIZE != 0)
+				int newSectorCount = (int)(length / SECTOR_SIZE);
+				if (length % SECTOR_SIZE != 0)
 					newSectorCount++;
 
 				// get the position of the end of the first free sector
-				uint endDataFirstSector = entries.Last().Offset + entries.Last().GetSize();
+				uint endDataFirstSector;
+				if (entries.Count > 0)  // if there aren't any entries, the first sector is the beginning of free space
+					endDataFirstSector = entries.Last().Offset + entries.Last().GetSize();
+				else
+					endDataFirstSector = firstSector;
 
 				// create a buffer to copy one sector of data at a time
 				byte[] buffer = new byte[SECTOR_SIZE];
+
+				// seek to offset
+				newFile.Seek(offset, SeekOrigin.Begin);
 
 				// copy each sector of data
 				for (int i = 0; i < newSectorCount; i++)
@@ -197,6 +232,51 @@ namespace Technoguyfication.IMGEditor.Shared
 
 				// done!
 				_fileStream.Flush();
+			}
+		}
+
+		/// <summary>
+		/// Defragment the IMG archive, this also disposes the instance.
+		/// </summary>
+		/// <param name="progress">A <see cref="Progress{T}"/> to track defrag progress</param>
+		public IMGFileVer2 Defragment(IProgress<ProgressUpdate> progress = null)
+		{
+			lock (_fileStream)
+			{
+				// create another img file from scratch
+				string newArchivePath = Path.GetTempFileName();
+				var newArchive = Create(newArchivePath);
+
+				// sort file entries by name
+				var entries = GetDirectoryEntries();
+				//entries.Sort((a, b) => string.Compare(a.Name, b.Name));
+
+				// add each entry into the file
+				for (int i = 0; i < entries.Count; i++)
+				{
+					newArchive.AddFile(entries[i].Name, _fileStream, entries[i].GetSize() * SECTOR_SIZE, entries[i].Offset * SECTOR_SIZE);
+
+					// report progress
+					progress?.Report(new ProgressUpdate()
+					{
+						MaxValue = entries.Count - 1,
+						Value = i
+					});
+				}
+
+				// check integrity
+				if (newArchive.FileCount != FileCount)
+					throw new Exception("Defragmented file count did not match original file count");
+
+				Dispose();
+				newArchive.Dispose();
+
+				// move file to original location
+				File.Copy(newArchivePath, _filePath, true);
+				File.Delete(newArchivePath);
+
+				// clean up and finish
+				return new IMGFileVer2(_filePath);
 			}
 		}
 
@@ -298,6 +378,28 @@ namespace Technoguyfication.IMGEditor.Shared
 					_fileStream.Flush();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Create a new blank archive
+		/// </summary>
+		/// <param name="filePath"></param>
+		public static IMGFileVer2 Create(string filePath)
+		{
+			FileStream _newArchiveStream = File.Create(filePath);
+			_newArchiveStream.Write(HEADER, 0, HEADER.Length);
+
+			// write length
+			_newArchiveStream.Write(new byte[] { 0x00, 0x00 }, 0, 2);
+
+			// make the file one sector long
+			_newArchiveStream.SetLength(SECTOR_SIZE);
+
+			// close stream
+			_newArchiveStream.Flush();
+			_newArchiveStream.Dispose();
+
+			return new IMGFileVer2(filePath);
 		}
 	}
 }
