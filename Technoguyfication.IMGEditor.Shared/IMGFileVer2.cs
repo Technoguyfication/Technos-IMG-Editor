@@ -249,7 +249,7 @@ namespace Technoguyfication.IMGEditor.Shared
 
 				// sort file entries by name
 				var entries = GetDirectoryEntries();
-				//entries.Sort((a, b) => string.Compare(a.Name, b.Name));
+				entries.Sort((a, b) => string.Compare(a.Name, b.Name));
 
 				// add each entry into the file
 				for (int i = 0; i < entries.Count; i++)
