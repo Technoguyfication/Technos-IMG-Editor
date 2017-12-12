@@ -88,8 +88,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <param name="filePath"></param>
 		public IMGFileVer2(string filePath)
 		{
-			_filePath = filePath;
-			_fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+			SetupStream(filePath);
 			FileInfo = new FileInfo(_filePath);
 		}
 
@@ -236,10 +235,10 @@ namespace Technoguyfication.IMGEditor.Shared
 		}
 
 		/// <summary>
-		/// Defragment the IMG archive, this also disposes the instance.
+		/// Defragment the IMG archive, this may take a very long time
 		/// </summary>
 		/// <param name="progress">A <see cref="Progress{T}"/> to track defrag progress</param>
-		public IMGFileVer2 Defragment(IProgress<ProgressUpdate> progress = null)
+		public void Defragment(IProgress<ProgressUpdate> progress = null)
 		{
 			lock (_fileStream)
 			{
@@ -268,15 +267,15 @@ namespace Technoguyfication.IMGEditor.Shared
 				if (newArchive.FileCount != FileCount)
 					throw new Exception("Defragmented file count did not match original file count");
 
-				Dispose();
+				_fileStream.Dispose();
 				newArchive.Dispose();
 
 				// move file to original location
 				File.Copy(newArchivePath, _filePath, true);
 				File.Delete(newArchivePath);
 
-				// clean up and finish
-				return new IMGFileVer2(_filePath);
+				// reset stream
+				SetupStream(_filePath);
 			}
 		}
 
@@ -400,6 +399,16 @@ namespace Technoguyfication.IMGEditor.Shared
 			_newArchiveStream.Dispose();
 
 			return new IMGFileVer2(filePath);
+		}
+
+		/// <summary>
+		/// Set up the file stream for this instance
+		/// </summary>
+		/// <param name="archivePath"></param>
+		private void SetupStream(string archivePath)
+		{
+			_filePath = archivePath;
+			_fileStream = new FileStream(archivePath, FileMode.Open, FileAccess.ReadWrite);
 		}
 	}
 }
