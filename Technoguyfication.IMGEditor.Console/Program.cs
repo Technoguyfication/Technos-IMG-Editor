@@ -146,6 +146,14 @@ namespace Technoguyfication.IMGEditor.CLI
 						if (imgfile == null)
 							return true;
 
+						// check if we're overwriting the files
+						if (Directory.Exists(outputPath))
+						{
+							Console.WriteLine("The output directory you specified already exists. Type \"yes\" to merge directories, or anything else to abort.");
+							if (Console.ReadLine().Trim().ToLower() != "yes")
+								return true;
+						}
+
 						// get data stream
 						try
 						{
@@ -164,23 +172,45 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						var files = imgfile.GetDirectoryEntries();
 
+						bool overwriteAll = false;
+						int numCopied = 0;
+
 						// copy each file out
 						foreach (var file in files)
 						{
-							var outStream = File.Create(Path.Combine(outputPath, file.Name));
+							string newFilePath = Path.Combine(outputPath, file.Name);
+
+							// check for conflicts
+							if (!overwriteAll && File.Exists(newFilePath))
+							{
+								Console.WriteLine($"File \"{file.Name}\" already exists. Type \"yes\" to overwrite it, \"all\" to overwrite all, or anything else to skip.");
+
+								string response = Console.ReadLine().Trim().ToLower();
+								if (response == "all")
+									overwriteAll = true;
+								else if (response != "yes")
+									continue;
+
+								File.Delete(newFilePath);
+							}
+
+							// create streams
+							var outStream = File.Create(newFilePath);
 							var inStream = imgfile.OpenFile(file);
 
+							// copy data to new file
 							byte[] buffer = new byte[inStream.Length];
-
 							inStream.Read(buffer, 0, (int)inStream.Length);
 							outStream.Write(buffer, 0, buffer.Length);
 
 							outStream.Flush();
 							outStream.Dispose();
+
+							numCopied++;
 						}
 
 						// finish
-						Console.WriteLine($"Extracted {imgfile.FileCount} files from archive.");
+						Console.WriteLine($"Extracted {numCopied} files from archive.");
 						return true;
 					}
 				case "extract":
