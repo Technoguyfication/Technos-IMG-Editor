@@ -90,6 +90,22 @@ namespace Technoguyfication.IMGEditor.Shared
 		{
 			SetupStream(filePath);
 			FileInfo = new FileInfo(_filePath);
+
+			// check if file is valid
+			lock (_fileStream)
+			{
+				_fileStream.Seek(0, SeekOrigin.Begin);
+				byte[] buffer = new byte[HEADER.Length];
+
+				_fileStream.Read(buffer, 0, buffer.Length);
+
+				for (int i = 0; i < buffer.Length; i++)
+				{
+					if (buffer[i] != HEADER[i])
+						throw new InvalidArchiveFormatException();
+				}
+
+			}
 		}
 
 		~IMGFileVer2()
