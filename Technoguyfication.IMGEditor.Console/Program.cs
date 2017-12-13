@@ -55,14 +55,14 @@ namespace Technoguyfication.IMGEditor.CLI
 				case "bump":
 					{
 						if (args.Length < 2)
-							return false;
+							break; ;
 
 						int amount = 1;
 
 						// attempt to parse bump amount
 						if (args.Length > 2)
 							if (!int.TryParse(args[2], out amount))
-								return false;
+								break;
 
 						// open file
 						IMGFileVer2 file = AttemptToOpenImgFile(args[1]);
@@ -90,7 +90,7 @@ namespace Technoguyfication.IMGEditor.CLI
 					{
 						// need atleast 3 args
 						if (args.Length < 3)
-							return false;
+							break;
 
 						string archivePath = args[1];
 						string filePath = args[2];
@@ -136,7 +136,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				case "extractall":
 					{
 						if (args.Length < 3)
-							return false;
+							break;
 
 						string archivePath = args[1];
 						string outputPath = args[2];
@@ -216,7 +216,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				case "extract":
 					{
 						if (args.Length < 3)
-							return false;
+							break;
 
 						// get file paths
 						string outputFolder;
@@ -278,7 +278,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				case "info":
 					{
 						if (args.Length < 2)
-							return false;
+							break;
 
 						string imgFilePath = args[1];
 
@@ -297,7 +297,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				case "defrag":
 					{
 						if (args.Length < 2)
-							return false;
+							break;
 
 						// open archive
 						string imgFilePath = args[1];
