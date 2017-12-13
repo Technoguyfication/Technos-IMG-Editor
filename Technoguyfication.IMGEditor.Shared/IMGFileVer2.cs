@@ -12,7 +12,7 @@ namespace Technoguyfication.IMGEditor.Shared
 	/// Represents a Version 2 IMG archive
 	/// https://www.gtamodding.com/wiki/IMG_archive#Version_2_-_GTA_SA
 	/// </summary>
-	public class IMGFileVer2 : IDisposable
+	public class IMGFileVer2 : IDisposable, IIMGArchive
 	{
 		private FileStream _fileStream;
 		private string _filePath;
@@ -151,16 +151,31 @@ namespace Technoguyfication.IMGEditor.Shared
 		}
 
 		/// <summary>
+		/// Gets the entry with the specified file name
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		public DirectoryEntry GetDirectoryEntry(string fileName)
+		{
+			var entry = GetDirectoryEntries().Find((e) => { return e.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase); });
+
+			if (entry == null)
+				throw new InvalidDirectoryEntryException("Directory entry does not exist");
+			else
+				return entry;
+		}
+
+		/// <summary>
 		/// Appends a file to the archive
 		/// </summary>
 		/// <param name="fileName"></param>
-		/// <param name="fileContents"></param>
-		public void AddFile(string fileName, FileStream newFile, long length, long offset = 0)
+		/// <param name="dataStream">A stream containing the file data</param>
+		public void AddFile(string fileName, Stream dataStream, long length, long offset = 0)
 		{
 			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
 				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
 
-			if (length + offset > newFile.Length)
+			if (length + offset > dataStream.Length)
 				throw new ArgumentException("Data to read exceeds file size");
 
 			lock (_fileStream)
@@ -201,12 +216,12 @@ namespace Technoguyfication.IMGEditor.Shared
 				byte[] buffer = new byte[SECTOR_SIZE];
 
 				// seek to offset
-				newFile.Seek(offset, SeekOrigin.Begin);
+				dataStream.Seek(offset, SeekOrigin.Begin);
 
 				// copy each sector of data
 				for (int i = 0; i < newSectorCount; i++)
 				{
-					newFile.Read(buffer, 0, SECTOR_SIZE);
+					dataStream.Read(buffer, 0, SECTOR_SIZE);
 					_fileStream.Seek((endDataFirstSector + i) * SECTOR_SIZE, SeekOrigin.Begin);
 					_fileStream.Write(buffer, 0, SECTOR_SIZE);
 
@@ -280,29 +295,45 @@ namespace Technoguyfication.IMGEditor.Shared
 		}
 
 		/// <summary>
-		/// Gets a file from the archive
+		/// Opens a file from the archive
 		/// </summary>
 		/// <param name="file"></param>
 		/// <returns></returns>
-		public byte[] GetFile(DirectoryEntry file)
+		public Stream OpenFile(DirectoryEntry file)
 		{
 			lock (_fileStream)
 			{
 				if (!GetDirectoryEntries().Contains(file))
 					throw new ArgumentException("File is not contained inside the archive.");
 
-				byte[] buffer = new byte[file.GetSize() * SECTOR_SIZE];
+				// create output stream
+				MemoryStream outStream = new MemoryStream();
 
+				byte[] buffer = new byte[SECTOR_SIZE];
 				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
 
-				int bytesRead = 0;
-				while (bytesRead < buffer.Length)
+				// read from file stream to out stream
+				for (int i = 0; i < file.Size; i++)
 				{
-					bytesRead += _fileStream.Read(buffer, bytesRead, buffer.Length - bytesRead);
+					_fileStream.Read(buffer, 0, SECTOR_SIZE);
+					outStream.Write(buffer, 0, SECTOR_SIZE);
 				}
 
-				return buffer;
+				// flush stream to make sure it's full
+				outStream.Flush();
+
+				return outStream;
 			}
+		}
+
+		/// <summary>
+		/// Opens a file from the archive
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		public Stream OpenFile(string fileName)
+		{
+			return OpenFile(GetDirectoryEntry(fileName));
 		}
 
 		/// <summary>

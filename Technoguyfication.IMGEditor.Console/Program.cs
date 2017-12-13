@@ -165,10 +165,15 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						foreach (var file in files)
 						{
-							var stream = File.Create(Path.Combine(outputPath, file.Name));
+							var outStream = File.Create(Path.Combine(outputPath, file.Name));
+							var inStream = imgfile.OpenFile(file);
 
-							byte[] buffer = imgfile.GetFile(file);
-							stream.Write(buffer, 0, buffer.Length);
+							byte[] buffer = new byte[inStream.Length];
+
+							inStream.Read(buffer, 0, (int)inStream.Length);
+							outStream.Write(buffer, 0, buffer.Length);
+
+							outStream.Flush();
 						}
 
 						Console.WriteLine($"Extracted {imgfile.FileCount} files from archive.");

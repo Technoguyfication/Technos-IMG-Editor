@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIMGArchive.cs" />
     <Compile Include="IMGFileVer2.cs" />
     <Compile Include="FileStructure\DirectoryEntry.cs" />
     <Compile Include="ProgressUpdate.cs" />
