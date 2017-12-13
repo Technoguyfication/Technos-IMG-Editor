@@ -100,7 +100,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						if (args.Length < 3)
 						{
 							int byteCount = Encoding.ASCII.GetByteCount(args[3]);
-							if (byteCount > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)	// user-entered name too long
+							if (byteCount > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)    // user-entered name too long
 							{
 								Console.WriteLine($"File name cannot be larger than 32 bytes. The name you have entered (\"{args[3]}\") has a byte count of {byteCount}");
 								return true;
@@ -133,7 +133,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
 					}
-				case "extract":
+				case "extractall":
 					{
 						if (args.Length < 3)
 							return false;
@@ -146,6 +146,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						if (imgfile == null)
 							return true;
 
+						// get data stream
 						try
 						{
 							Directory.CreateDirectory(outputPath);
@@ -163,6 +164,7 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						var files = imgfile.GetDirectoryEntries();
 
+						// copy each file out
 						foreach (var file in files)
 						{
 							var outStream = File.Create(Path.Combine(outputPath, file.Name));
@@ -174,9 +176,73 @@ namespace Technoguyfication.IMGEditor.CLI
 							outStream.Write(buffer, 0, buffer.Length);
 
 							outStream.Flush();
+							outStream.Dispose();
 						}
 
+						// finish
 						Console.WriteLine($"Extracted {imgfile.FileCount} files from archive.");
+						return true;
+					}
+				case "extract":
+					{
+						if (args.Length < 3)
+							return false;
+
+						// get file paths
+						string outputFolder;
+						if (args.Length < 4)
+							outputFolder = Environment.CurrentDirectory;
+						else
+							outputFolder = args[3];
+
+						string archivePath = args[1];
+						string internalFileName = args[2];
+						
+
+						// load archive
+						var imgFile = AttemptToOpenImgFile(archivePath);
+						if (imgFile == null)
+							return true;
+
+						Stream inputStream;
+
+						// get stream for file
+						try
+						{
+							inputStream = imgFile.OpenFile(internalFileName);
+						}
+						catch (InvalidDirectoryEntryException)
+						{
+							Console.WriteLine($"File \"{internalFileName}\" does not exist inside archive.");
+							return true;
+						}
+
+						string outputFile = Path.Combine(outputFolder, internalFileName);
+
+						// check if file exists
+						if (File.Exists(outputFile))
+						{
+							Console.WriteLine("File already exists. Type \"yes\" to overwrite, or anything else to abort.");
+							if (Console.ReadLine().Trim().ToLower() != "yes")
+								return true;
+
+							File.Delete(outputFile);
+						}
+
+						// create output file
+						Directory.CreateDirectory(outputFolder);
+						var outputStream = File.Create(outputFile);
+
+						// stream data into output file
+						byte[] buffer = new byte[inputStream.Length];
+
+						inputStream.Read(buffer, 0, buffer.Length);
+						outputStream.Write(buffer, 0, buffer.Length);
+
+						// finish
+						outputStream.Flush();
+						Console.WriteLine($"Copied \"{internalFileName}\" to \"{outputFolder}\"");
+
 						return true;
 					}
 				case "info":
@@ -232,7 +298,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						watch.Stop();
 
 						Console.WriteLine($"]\n\nFinished defragmenting. Took {watch.Elapsed.ToString()}.");
-						
+
 						return true;
 
 						void displayProgressUpdate(ProgressUpdate update)
@@ -271,9 +337,13 @@ namespace Technoguyfication.IMGEditor.CLI
 			builder.AppendLine("Drag n' drop an IMG archive to extract it.");
 			builder.AppendLine("Drag n' drop a folder to turn it into an IMG archive.");
 
-			// extract
+			// extract all
 			builder.AppendLine("\nExtract all files from an archive:");
-			builder.AppendLine($"  > {AssemblyName} extract (IMG file path) (output path)");
+			builder.AppendLine($"  > {AssemblyName} extractall (IMG file path) (output path)");
+
+			// extract
+			builder.AppendLine("\nExtract a single file from an archive:");
+			builder.AppendLine($"  > {AssemblyName} extract (IMG file path) (file name) [output folder (default is working directory)]");
 
 			// add
 			builder.AppendLine("\nAdd a file to an archive:");
