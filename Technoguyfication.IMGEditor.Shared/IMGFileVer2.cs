@@ -313,7 +313,7 @@ namespace Technoguyfication.IMGEditor.Shared
 				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
 
 				// read from file stream to out stream
-				for (int i = 0; i < file.Size; i++)
+				for (int i = 0; i < file.GetSize(); i++)
 				{
 					_fileStream.Read(buffer, 0, SECTOR_SIZE);
 					outStream.Write(buffer, 0, SECTOR_SIZE);
