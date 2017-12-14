@@ -360,18 +360,23 @@ namespace Technoguyfication.IMGEditor.CLI
 				var bar = new ProgressBar();
 				var entries = archive.GetDirectoryEntries();
 
+				Console.WriteLine($"Extracting \"{Path.GetFileName(filePath)}\" to \"{outputDir}\"");
+
 				// extract each file
 				for (int i = 0; i < entries.Count; i++)
 				{
-					bar.SetPercent(ProgressBar.GetPercent(i, entries.Count - 1));
 					IMGUtilities.Extract(archive, entries[i].Name, outputDir, true);
+
+					bar.SetPercent(ProgressBar.GetPercent(i, entries.Count - 1));
 				}
 
+				// done
 				Console.WriteLine($"Extracted {entries.Count} files from archive to \"{outputDir}\"");
 				return true;
 			}
 			else if (Directory.Exists(filePath))
 			{
+				// TODO: this
 				throw new NotImplementedException();
 			}
 
@@ -404,11 +409,11 @@ namespace Technoguyfication.IMGEditor.CLI
 			builder.AppendLine("\nGet info on an archive:");
 			builder.AppendLine($" > {AssemblyName} info (IMG file path)");
 
+			builder.AppendLine("\nAdvanced commands:");
+
 			// defrag
 			builder.AppendLine("\nDefragment an IMG archive:");
 			builder.AppendLine($" > {AssemblyName} defrag (IMG file path)");
-
-			builder.AppendLine("\nAdvanced commands:");
 
 			// bump entries
 			builder.AppendLine("\nMove file entries from the top to the bottom of an IMG archive for making more directory space:");

@@ -48,7 +48,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				return;
 
 			// print each percent out
-			for (int i = _lastPercent; i < percent; i++)
+			for (int i = _lastPercent + 1; i <= percent; i++)
 			{
 				PrintBar(i);
 			}
