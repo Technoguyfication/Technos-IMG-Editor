@@ -10,11 +10,17 @@ using System.Windows.Forms;
 
 namespace Technoguyfication.IMGEditor.GUI
 {
-	public partial class Form1 : Form
+	public partial class MainForm : Form
 	{
-		public Form1()
+		public MainForm()
 		{
 			InitializeComponent();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+			// format title
+			Text = string.Format(Text, Application.ProductVersion);
 		}
 	}
 }

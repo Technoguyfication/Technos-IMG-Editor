@@ -4,20 +4,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technoguyfication.IMGEditor.Shared.FileStructure;
+using Technoguyfication.IMGEditor.Shared.Version2;
 
 namespace Technoguyfication.IMGEditor.Shared
 {
-	interface IIMGArchive
+	public interface IIMGArchive
 	{
-		void AddFile(string fileName, Stream dataStream, long length, long offset);
+		FileInfo FileInfo { get; }
+		uint FileCount { get; }
+
+		void AddFile(string fileName, Stream dataStream, uint length, uint offset = 0);
 		Stream OpenFile(string fileName);
-		Stream OpenFile(DirectoryEntry file);
-
-		DirectoryEntry GetDirectoryEntry(ushort index);
-		DirectoryEntry GetDirectoryEntry(string fileName);
-		List<DirectoryEntry> GetDirectoryEntries();
-
+		Stream OpenFile(IDirectoryEntry file);
 		void Defragment(IProgress<ProgressUpdate> progress);
+		void Bump(int amount);
+
+		IDirectoryEntry GetDirectoryEntry(string fileName);
+		List<IDirectoryEntry> GetDirectoryEntries();
 	}
 }

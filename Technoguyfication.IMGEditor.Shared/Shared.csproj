@@ -40,12 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDirectoryEntry.cs" />
+    <Compile Include="Version2\Ver2DirectoryEntry.cs" />
     <Compile Include="IIMGArchive.cs" />
-    <Compile Include="IMGFileVer2.cs" />
-    <Compile Include="FileStructure\DirectoryEntry.cs" />
+    <Compile Include="Version2\Ver2IMGArchive.cs" />
+    <Compile Include="IMGOpener.cs" />
+    <Compile Include="IMGUtilities.cs" />
     <Compile Include="ProgressUpdate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

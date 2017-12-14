@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technoguyfication.IMGEditor.Shared.FileStructure
+namespace Technoguyfication.IMGEditor.Shared.Version2
 {
 	/// <summary>
 	/// Represents a file directory entry
 	/// https://www.gtamodding.com/wiki/IMG_archive#Directory_Entry_2
 	/// </summary>
-	public class DirectoryEntry
+	public class Ver2DirectoryEntry : IDirectoryEntry
 	{
 		/// <summary>
 		/// The offset of the data (in sectors)
@@ -20,12 +20,12 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 		/// <summary>
 		/// Streaming Size (in sectors)
 		/// </summary>
-		public ushort StreamingSize { get; set; }
+		public uint StreamingSize { get; set; }
 
 		/// <summary>
 		/// Size of the file (in sectors)
 		/// </summary>
-		public ushort Size { get; set; }
+		public uint InternalSize { get; set; }
 
 		/// <summary>
 		/// Name of the file the data represents, cannot be longer than 23 bytes
@@ -39,8 +39,8 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 			set
 			{
 				// name takes at max. 24 bytes, with last one reserved for null terminator
-				if (Encoding.ASCII.GetByteCount(value) > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)
-					throw new Exception($"Name cannot be longer than {IMGFileVer2.MAX_DIRECTORY_FILE_NAME} bytes.");
+				if (Encoding.ASCII.GetByteCount(value) > Ver2IMGArchive.MAX_DIRECTORY_FILE_NAME)
+					throw new Exception($"Name cannot be longer than {Ver2IMGArchive.MAX_DIRECTORY_FILE_NAME} bytes.");
 
 				_name = value;
 			}
@@ -56,34 +56,45 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 			List<byte> builder = new List<byte>();
 
 			// serialize each value
-			builder.AddRange(BitConverter.GetBytes(Offset).ReverseIfBigEndian());
-			builder.AddRange(BitConverter.GetBytes(StreamingSize).ReverseIfBigEndian());
-			builder.AddRange(BitConverter.GetBytes(Size).ReverseIfBigEndian());
+			builder.AddRange(BitConverter.GetBytes((uint)Offset).ReverseIfBigEndian());
+			builder.AddRange(BitConverter.GetBytes((ushort)StreamingSize).ReverseIfBigEndian());
+			builder.AddRange(BitConverter.GetBytes((ushort)InternalSize).ReverseIfBigEndian());
 			builder.AddRange(Encoding.ASCII.GetBytes(Name));
 
 			// fill the rest of the string with null bytes
-			builder.AddRange(new byte[IMGFileVer2.DIRECTORY_ITEM_SIZE - builder.Count]);
+			builder.AddRange(new byte[Ver2IMGArchive.DIRECTORY_ITEM_SIZE - builder.Count]);
 
 			return builder.ToArray();
 		}
 
 		/// <summary>
-		/// Get the size of the directory entry, in sectors
+		/// The size of the directory entry, in sectors
 		/// </summary>
 		/// <returns></returns>
-		public ushort GetSize()
+		public uint Size
 		{
-			if (StreamingSize == 0)
-				return Size;
-			else
-				return StreamingSize;
+			get
+			{
+				if (StreamingSize == 0)
+					return InternalSize;
+				else
+					return StreamingSize;
+			}
+			set
+			{
+				StreamingSize = (ushort)value;
+			}
 		}
 
+		/// <summary>
+		/// Returns a string containing information about the directory entry
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return $"Offset: {Offset} Sectors ({Offset * 2048} Bytes)\n" +
 				$"Streaming Size: {StreamingSize} Sectors ({StreamingSize * 2048} Bytes)\n" +
-				$"Size: {Size} Sectors ({Size * 2048} Bytes)\n" +
+				$"Size: {InternalSize} Sectors ({InternalSize * 2048} Bytes)\n" +
 				$"Name: {Name}";
 		}
 
@@ -92,7 +103,7 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 		/// </summary>
 		/// <param name="bytes">An array containing exactly 32 bytes</param>
 		/// <returns></returns>
-		public static DirectoryEntry FromBytes(byte[] bytes)
+		public static Ver2DirectoryEntry FromBytes(byte[] bytes)
 		{
 			if (bytes.Length != 32)
 			{
@@ -106,11 +117,11 @@ namespace Technoguyfication.IMGEditor.Shared.FileStructure
 			byte[] nameBytes = bytes.SubArray(8, 24);
 
 			// create a new entry
-			DirectoryEntry entry = new DirectoryEntry
+			Ver2DirectoryEntry entry = new Ver2DirectoryEntry
 			{
 				Offset = BitConverter.ToUInt32(offsetBytes.ReverseIfBigEndian(), 0),
 				StreamingSize = BitConverter.ToUInt16(streamingSizeBytes.ReverseIfBigEndian(), 0),
-				Size = BitConverter.ToUInt16(sizeBytes.ReverseIfBigEndian(), 0),
+				InternalSize = BitConverter.ToUInt16(sizeBytes.ReverseIfBigEndian(), 0),
 				Name = nameBytes.ToNullTerminatedString()
 			};
 

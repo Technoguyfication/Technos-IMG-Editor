@@ -65,8 +65,8 @@ namespace Technoguyfication.IMGEditor.CLI
 								break;
 
 						// open file
-						IMGFileVer2 file = AttemptToOpenImgFile(args[1]);
-						if (file == null)
+						var archive = AttemptToOpenArchive(args[1]);
+						if (archive == null)
 							return true;
 
 						string filePath = args[1];
@@ -74,7 +74,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						// perform the edit
 						try
 						{
-							file.Bump(amount);
+							archive.Bump(amount);
 						}
 						catch (Exception ex)
 						{
@@ -83,7 +83,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						}
 
 						// end
-						Console.WriteLine($"Successfully bumped {amount} entries from beginning of {Path.GetFileName(filePath)} to the end, freeing up {amount * IMGFileVer2.SECTOR_SIZE} bytes for directory entries.");
+						Console.WriteLine($"Successfully bumped {amount} entries from beginning of {Path.GetFileName(filePath)} to the end, freeing up {amount * Ver2IMGArchive.SECTOR_SIZE} bytes for directory entries.");
 						return true;
 					}
 				case "add":
@@ -100,7 +100,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						if (args.Length < 3)
 						{
 							int byteCount = Encoding.ASCII.GetByteCount(args[3]);
-							if (byteCount > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)    // user-entered name too long
+							if (byteCount > Ver2IMGArchive.MAX_DIRECTORY_FILE_NAME)    // user-entered name too long
 							{
 								Console.WriteLine($"File name cannot be larger than 32 bytes. The name you have entered (\"{args[3]}\") has a byte count of {byteCount}");
 								return true;
@@ -112,7 +112,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						{
 							string fileName = Path.GetFileName(filePath);
 
-							if (Encoding.ASCII.GetByteCount(fileName) > IMGFileVer2.MAX_DIRECTORY_FILE_NAME)
+							if (Encoding.ASCII.GetByteCount(fileName) > Ver2IMGArchive.MAX_DIRECTORY_FILE_NAME)
 							{
 								Console.WriteLine("The file name of the file you are adding is longer than the maximum allowed size. Consider specifying a name instead.");
 								return true;
@@ -122,13 +122,13 @@ namespace Technoguyfication.IMGEditor.CLI
 						}
 
 						// load img file
-						IMGFileVer2 file = AttemptToOpenImgFile(archivePath);
-						if (file == null)
+						var archive = AttemptToOpenArchive(archivePath);
+						if (archive == null)
 							return true;
 
 						// load file into buffer
 						FileStream fileStream = File.OpenRead(filePath);
-						file.AddFile(archiveFileName, fileStream, fileStream.Length);
+						archive.AddFile(archiveFileName, fileStream, (uint)fileStream.Length);
 
 						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
@@ -142,8 +142,8 @@ namespace Technoguyfication.IMGEditor.CLI
 						string outputPath = args[2];
 
 						// open img file
-						IMGFileVer2 imgfile = AttemptToOpenImgFile(archivePath);
-						if (imgfile == null)
+						var archive = AttemptToOpenArchive(archivePath);
+						if (archive == null)
 							return true;
 
 						// check if we're overwriting the files
@@ -170,7 +170,7 @@ namespace Technoguyfication.IMGEditor.CLI
 							return true;
 						}
 
-						var files = imgfile.GetDirectoryEntries();
+						var files = archive.GetDirectoryEntries();
 
 						bool overwriteAll = false;
 						int numCopied = 0;
@@ -196,7 +196,7 @@ namespace Technoguyfication.IMGEditor.CLI
 
 							// create streams
 							var outStream = File.Create(newFilePath);
-							var inStream = imgfile.OpenFile(file);
+							var inStream = archive.OpenFile(file);
 
 							// copy data to new file
 							byte[] buffer = new byte[inStream.Length];
@@ -227,11 +227,11 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						string archivePath = args[1];
 						string internalFileName = args[2];
-						
+
 
 						// load archive
-						var imgFile = AttemptToOpenImgFile(archivePath);
-						if (imgFile == null)
+						var archive = AttemptToOpenArchive(archivePath);
+						if (archive == null)
 							return true;
 
 						Stream inputStream;
@@ -239,7 +239,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						// get stream for file
 						try
 						{
-							inputStream = imgFile.OpenFile(internalFileName);
+							inputStream = archive.OpenFile(internalFileName);
 						}
 						catch (InvalidDirectoryEntryException)
 						{
@@ -280,16 +280,16 @@ namespace Technoguyfication.IMGEditor.CLI
 						if (args.Length < 2)
 							break;
 
-						string imgFilePath = args[1];
+						string archivePath = args[1];
 
-						IMGFileVer2 imgFile = AttemptToOpenImgFile(imgFilePath);
-						if (imgFile == null)
+						var archive = AttemptToOpenArchive(archivePath);
+						if (archive == null)
 							return true;
 
-						float filesizeMB = imgFile.FileInfo.Length / 1E6f;
+						float filesizeMB = archive.FileInfo.Length / 1E6f;
 
-						Console.WriteLine($"{Path.GetFileName(imgFilePath)}:\n" +
-							$"  File Count: {imgFile.FileCount}\n" +
+						Console.WriteLine($"{Path.GetFileName(archivePath)}:\n" +
+							$"  File Count: {archive.FileCount}\n" +
 							$"  Size: {filesizeMB.ToString("0.00")}MB");
 
 						return true;
@@ -301,8 +301,8 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						// open archive
 						string imgFilePath = args[1];
-						IMGFileVer2 imgFile = AttemptToOpenImgFile(imgFilePath);
-						if (imgFile == null)
+						var archive = AttemptToOpenArchive(imgFilePath);
+						if (archive == null)
 							return true;
 
 						// confirm that the user wants to defragment
@@ -323,7 +323,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						int lastPercent = 0;
 
 						// defragment the file
-						imgFile.Defragment(new Progress<ProgressUpdate>(displayProgressUpdate));
+						archive.Defragment(new Progress<ProgressUpdate>(displayProgressUpdate));
 
 						watch.Stop();
 
@@ -352,6 +352,29 @@ namespace Technoguyfication.IMGEditor.CLI
 							}
 						}
 					}
+			}
+
+			if (args.Length < 1)
+				return false;
+
+			// try dragging and dropping
+			return DragNDrop(args[0]);
+		}
+
+		/// <summary>
+		/// Runs drag 'n drop for the specified file
+		/// </summary>
+		/// <param name="filePath">Whether anything was done</param>
+		private static bool DragNDrop(string filePath)
+		{
+			// check if file is img archive
+			if (IMGOpener.IsValidArchive(filePath)) // TODO: accept .dir files for older versions
+			{
+				throw new NotImplementedException();
+			}
+			else if (Directory.Exists(filePath))
+			{
+				throw new NotImplementedException();
 			}
 
 			return false;
@@ -401,11 +424,11 @@ namespace Technoguyfication.IMGEditor.CLI
 		/// </summary>
 		/// <param name="filePath"></param>
 		/// <returns>IMGFileVer2, or null on error</returns>
-		private static IMGFileVer2 AttemptToOpenImgFile(string filePath)
+		private static IIMGArchive AttemptToOpenArchive(string filePath)
 		{
 			try
 			{
-				return new IMGFileVer2(filePath);
+				return IMGOpener.GetArchive(filePath);
 			}
 			catch (FileNotFoundException)
 			{
