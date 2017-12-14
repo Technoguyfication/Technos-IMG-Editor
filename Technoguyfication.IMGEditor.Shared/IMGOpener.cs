@@ -32,16 +32,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <returns></returns>
 		public static bool IsValidArchive(string filePath)
 		{
-			try
-			{
-				GetArchive(filePath);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-
-			return true;
+			return Ver2IMGArchive.IsValidArchive(filePath);
 		}
 	}
 }

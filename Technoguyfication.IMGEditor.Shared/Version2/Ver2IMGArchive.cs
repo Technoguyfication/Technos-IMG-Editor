@@ -456,7 +456,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// <param name="filePath"></param>
 		public static bool IsValidArchive(string filePath)
 		{
-			Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+			Stream stream = File.Open(filePath, FileMode.Open);
 
 			stream.Seek(0, SeekOrigin.Begin);
 			byte[] buffer = new byte[HEADER.Length];

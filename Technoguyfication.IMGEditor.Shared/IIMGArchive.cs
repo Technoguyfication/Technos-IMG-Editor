@@ -15,7 +15,6 @@ namespace Technoguyfication.IMGEditor.Shared
 
 		void AddFile(string fileName, Stream dataStream, uint length, uint offset = 0);
 		Stream OpenFile(string fileName);
-		Stream OpenFile(IDirectoryEntry file);
 		void Defragment(IProgress<ProgressUpdate> progress);
 		void Bump(int amount);
 

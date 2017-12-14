@@ -196,7 +196,7 @@ namespace Technoguyfication.IMGEditor.CLI
 
 							// create streams
 							var outStream = File.Create(newFilePath);
-							var inStream = archive.OpenFile(file);
+							var inStream = archive.OpenFile(file.Name);
 
 							// copy data to new file
 							byte[] buffer = new byte[inStream.Length];
@@ -320,37 +320,19 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.Write("\n[ ");
 
 						var watch = Stopwatch.StartNew();
-						int lastPercent = 0;
+						ProgressBar bar = new ProgressBar();
 
 						// defragment the file
-						archive.Defragment(new Progress<ProgressUpdate>(displayProgressUpdate));
+						archive.Defragment(new Progress<ProgressUpdate>((progress) =>
+						{
+							bar.SetPercent(progress.GetPercent());
+						}));
 
 						watch.Stop();
 
 						Console.WriteLine($"]\n\nFinished defragmenting. Took {watch.Elapsed.ToString()}.");
 
 						return true;
-
-						void displayProgressUpdate(ProgressUpdate update)
-						{
-							if (update.Type == ProgressUpdateType.STRING)
-							{
-								Console.WriteLine(update.Message);
-								return;
-							}
-							else if (update.Type == ProgressUpdateType.NUMERICAL)
-							{
-								if (lastPercent == update.GetPercent())
-									return;
-
-								if (update.GetPercent() % 10 == 0)
-									Console.Write($" {update.GetPercent()}% ");
-								else if (update.GetPercent() % 2 == 0)
-									Console.Write(".");
-
-								lastPercent = update.GetPercent();
-							}
-						}
 					}
 			}
 
@@ -368,9 +350,25 @@ namespace Technoguyfication.IMGEditor.CLI
 		private static bool DragNDrop(string filePath)
 		{
 			// check if file is img archive
-			if (IMGOpener.IsValidArchive(filePath)) // TODO: accept .dir files for older versions
+			if (IMGOpener.IsValidArchive(filePath))
 			{
-				throw new NotImplementedException();
+				var archive = AttemptToOpenArchive(filePath);
+				if (archive == null)
+					return true;
+
+				string outputDir = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileNameWithoutExtension(filePath));
+				var bar = new ProgressBar();
+				var entries = archive.GetDirectoryEntries();
+
+				// extract each file
+				for (int i = 0; i < entries.Count; i++)
+				{
+					bar.SetPercent(ProgressBar.GetPercent(i, entries.Count - 1));
+					IMGUtilities.Extract(archive, entries[i].Name, outputDir, true);
+				}
+
+				Console.WriteLine($"Extracted {entries.Count} files from archive to \"{outputDir}\"");
+				return true;
 			}
 			else if (Directory.Exists(filePath))
 			{
@@ -437,7 +435,7 @@ namespace Technoguyfication.IMGEditor.CLI
 			}
 			catch (IOException ex)
 			{
-				Console.WriteLine($"Error opening file:\n{ex.Message}");
+				Console.WriteLine($"Error opening file:\n{ex}");
 				return null;
 			}
 			catch (Exception ex)
