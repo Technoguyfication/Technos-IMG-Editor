@@ -128,7 +128,7 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						// load file into buffer
 						FileStream fileStream = File.OpenRead(filePath);
-						archive.AddFile(archiveFileName, fileStream, (uint)fileStream.Length);
+						archive.AddFile(archiveFileName, fileStream, (uint)fileStream.Length, 0);
 
 						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;

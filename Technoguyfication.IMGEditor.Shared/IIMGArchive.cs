@@ -13,7 +13,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		FileInfo FileInfo { get; }
 		uint FileCount { get; }
 
-		void AddFile(string fileName, Stream dataStream, uint length, uint offset = 0);
+		void AddFile(string fileName, Stream dataStream, uint length, uint offset);
 		Stream OpenFile(string fileName);
 		void Defragment(IProgress<ProgressUpdate> progress);
 		void Bump(int amount);

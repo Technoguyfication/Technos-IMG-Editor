@@ -176,7 +176,7 @@ namespace Technoguyfication.IMGEditor.Shared
 		/// </summary>
 		/// <param name="fileName"></param>
 		/// <param name="dataStream">A stream containing the file data</param>
-		public void AddFile(string fileName, Stream dataStream, uint length, uint offset = 0)
+		public void AddFile(string fileName, Stream dataStream, uint length, uint offset)
 		{
 			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
 				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
