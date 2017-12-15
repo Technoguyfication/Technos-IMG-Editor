@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Technoguyfication.IMGEditor.Version2;
 
-namespace Technoguyfication.IMGEditor.Shared
+namespace Technoguyfication.IMGEditor
 {
 	/// <summary>
 	/// Provides utilities for opening IMG archives of varying formats

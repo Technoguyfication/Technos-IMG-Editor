@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technoguyfication.IMGEditor.Shared.Version2;
+using Technoguyfication.IMGEditor.Version2;
 
-namespace Technoguyfication.IMGEditor.Shared
+namespace Technoguyfication.IMGEditor
 {
 	public interface IIMGArchive
 	{

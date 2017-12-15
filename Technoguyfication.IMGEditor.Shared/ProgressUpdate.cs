@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technoguyfication.IMGEditor.Shared
+namespace Technoguyfication.IMGEditor
 {
 	/// <summary>
 	/// Simple class to be used with <see cref="IProgress{T}"/> for progress tracking.

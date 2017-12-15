@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using Technoguyfication.IMGEditor.Shared;
+using Technoguyfication.IMGEditor;
 using System.Diagnostics;
+using Technoguyfication.IMGEditor.Version2;
 
 namespace Technoguyfication.IMGEditor.CLI
 {

@@ -7,7 +7,7 @@
     <ProjectGuid>{90E5A277-24B9-4A9E-B97C-D523D585CB0D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Technoguyfication.IMGEditor.Shared</RootNamespace>
+    <RootNamespace>Technoguyfication.IMGEditor</RootNamespace>
     <AssemblyName>Technoguyfication.IMGEditor.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

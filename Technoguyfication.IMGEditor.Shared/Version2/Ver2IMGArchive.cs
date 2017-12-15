@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Technoguyfication.IMGEditor.Shared.Version2;
+using Technoguyfication.IMGEditor;
 
-namespace Technoguyfication.IMGEditor.Shared
+namespace Technoguyfication.IMGEditor.Version2
 {
 	/// <summary>
 	/// Represents a Version 2 IMG archive

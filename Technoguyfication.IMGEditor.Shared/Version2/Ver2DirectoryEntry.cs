@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technoguyfication.IMGEditor.Shared.Version2
+namespace Technoguyfication.IMGEditor.Version2
 {
 	/// <summary>
 	/// Represents a file directory entry
