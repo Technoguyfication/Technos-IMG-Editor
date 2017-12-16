@@ -35,5 +35,18 @@ namespace Technoguyfication.IMGEditor
 		{
 			return Ver2IMGArchive.IsValidArchive(filePath);
 		}
+
+		/// <summary>
+		/// Gets the user-friendly name of an Archive type
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static string GetFriendlyName(Type type)
+		{
+			if (type == typeof(Ver2IMGArchive))
+				return "Version 2 (San Andreas)";
+			else
+				return "Unknown";
+		}
 	}
 }

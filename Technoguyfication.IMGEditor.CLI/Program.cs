@@ -289,9 +289,10 @@ namespace Technoguyfication.IMGEditor.CLI
 
 						float filesizeMB = archive.FileInfo.Length / 1E6f;
 
-						Console.WriteLine($"{Path.GetFileName(archivePath)}:\n" +
+						Console.WriteLine($"Archive Info: {Path.GetFileName(archivePath)}:\n" +
 							$"  File Count: {archive.FileCount}\n" +
-							$"  Size: {filesizeMB.ToString("0.00")}MB");
+							$"  Size: {filesizeMB.ToString("0.00")}MB\n" +
+							$"  Archive Type: {IMGOpener.GetFriendlyName(archive.GetType())}");
 
 						return true;
 					}
