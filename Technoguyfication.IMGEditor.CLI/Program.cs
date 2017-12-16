@@ -375,11 +375,6 @@ namespace Technoguyfication.IMGEditor.CLI
 				Console.WriteLine($"Extracted {entries.Count} files from archive to \"{outputDir}\"");
 				return true;
 			}
-			else if (Directory.Exists(filePath))
-			{
-				// TODO: this
-				throw new NotImplementedException();
-			}
 
 			return false;
 		}
@@ -391,8 +386,7 @@ namespace Technoguyfication.IMGEditor.CLI
 		{
 			var builder = new StringBuilder($"Techno's IMG Editor (v{Assembly.GetExecutingAssembly().GetName().Version.ToString()}) for Grand Theft Auto III/VC/SA/IV\n\n");
 
-			builder.AppendLine("Drag n' drop an IMG archive to extract it.");
-			builder.AppendLine("Drag n' drop a folder to turn it into an IMG archive.");
+			builder.AppendLine("Drag 'n drop an IMG archive to extract it.");
 
 			// extract all
 			builder.AppendLine("\nExtract all files from an archive:");
