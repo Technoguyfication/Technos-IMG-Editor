@@ -34,6 +34,9 @@
   <PropertyGroup>
     <StartupObject>Technoguyfication.IMGEditor.GUI.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>IMGEditor GUI.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,6 +89,9 @@
       <Project>{90e5a277-24b9-4a9e-b97c-d523d585cb0d}</Project>
       <Name>Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IMGEditor GUI.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
