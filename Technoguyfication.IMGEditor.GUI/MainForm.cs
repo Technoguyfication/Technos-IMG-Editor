@@ -22,5 +22,20 @@ namespace Technoguyfication.IMGEditor.GUI
 			// format title
 			Text = string.Format(Text, Application.ProductVersion);
 		}
+
+		private void FileListView_RetreiveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Opens an archive, prompting the user to save if required
+		/// </summary>
+		private void OpenArchive()
+		{
+
+		}
+
+
 	}
 }
