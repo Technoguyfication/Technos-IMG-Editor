@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,11 +50,14 @@
 			this.helpToolStripMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.fileListView = new System.Windows.Forms.ListView();
+			this.nameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.sizeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.mainMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainMenuStrip
 			// 
+			this.mainMenuStrip.BackColor = System.Drawing.SystemColors.Window;
 			this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -61,7 +65,8 @@
             this.helpToolStripMenuItem});
 			this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
 			this.mainMenuStrip.Name = "mainMenuStrip";
-			this.mainMenuStrip.Size = new System.Drawing.Size(456, 24);
+			this.mainMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.mainMenuStrip.Size = new System.Drawing.Size(509, 24);
 			this.mainMenuStrip.TabIndex = 0;
 			this.mainMenuStrip.Text = "mainMenuStrip";
 			// 
@@ -84,50 +89,51 @@
 			// 
 			this.newToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.database_add;
 			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-			this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.newToolStripMenuItem.Text = "&New...";
 			// 
 			// openToolStripMenuItem
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.openToolStripMenuItem.Text = "&Open...";
+			this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
 			// 
 			// fileToolStripSeparator
 			// 
 			this.fileToolStripSeparator.Name = "fileToolStripSeparator";
-			this.fileToolStripSeparator.Size = new System.Drawing.Size(149, 6);
+			this.fileToolStripSeparator.Size = new System.Drawing.Size(132, 6);
 			// 
 			// extractToolStripMenuItem
 			// 
 			this.extractToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.page_white_get;
 			this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
-			this.extractToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.extractToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.extractToolStripMenuItem.Text = "&Extract...";
 			// 
 			// extractAlllToolStripMenuItem
 			// 
 			this.extractAlllToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.folder_go;
 			this.extractAlllToolStripMenuItem.Name = "extractAlllToolStripMenuItem";
-			this.extractAlllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.extractAlllToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.extractAlllToolStripMenuItem.Text = "Extract All...";
 			// 
 			// addFilesToolStripMenuItem
 			// 
 			this.addFilesToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.page_add;
 			this.addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-			this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.addFilesToolStripMenuItem.Text = "&Add Files...";
 			// 
 			// fileToolStripSeparator3
 			// 
 			this.fileToolStripSeparator3.Name = "fileToolStripSeparator3";
-			this.fileToolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+			this.fileToolStripSeparator3.Size = new System.Drawing.Size(132, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
@@ -151,26 +157,29 @@
             this.largeIconToolStripMenuItem,
             this.smallIconToolStripMenuItem});
 			this.itemViewToolStripMenuItem.Name = "itemViewToolStripMenuItem";
-			this.itemViewToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.itemViewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.itemViewToolStripMenuItem.Text = "Item View";
 			// 
 			// detailsToolStripMenuItem
 			// 
 			this.detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
-			this.detailsToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.detailsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.detailsToolStripMenuItem.Text = "Details";
+			this.detailsToolStripMenuItem.Click += new System.EventHandler(this.DetailsToolStripMenuItem_Click);
 			// 
 			// largeIconToolStripMenuItem
 			// 
 			this.largeIconToolStripMenuItem.Name = "largeIconToolStripMenuItem";
-			this.largeIconToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.largeIconToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.largeIconToolStripMenuItem.Text = "Large Icons";
+			this.largeIconToolStripMenuItem.Click += new System.EventHandler(this.LargeIconToolStripMenuItem_Click);
 			// 
 			// smallIconToolStripMenuItem
 			// 
 			this.smallIconToolStripMenuItem.Name = "smallIconToolStripMenuItem";
-			this.smallIconToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+			this.smallIconToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.smallIconToolStripMenuItem.Text = "Small Icons";
+			this.smallIconToolStripMenuItem.Click += new System.EventHandler(this.SmallIconToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -203,21 +212,39 @@
 			// 
 			// fileListView
 			// 
-			this.fileListView.Location = new System.Drawing.Point(12, 44);
+			this.fileListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.fileListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.nameColumnHeader,
+            this.sizeColumnHeader});
+			this.fileListView.Location = new System.Drawing.Point(12, 27);
 			this.fileListView.Name = "fileListView";
-			this.fileListView.Size = new System.Drawing.Size(432, 214);
+			this.fileListView.Size = new System.Drawing.Size(485, 259);
 			this.fileListView.TabIndex = 1;
 			this.fileListView.UseCompatibleStateImageBehavior = false;
+			this.fileListView.View = System.Windows.Forms.View.Details;
 			this.fileListView.VirtualMode = true;
 			this.fileListView.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.FileListView_RetreiveVirtualItem);
+			// 
+			// nameColumnHeader
+			// 
+			this.nameColumnHeader.Text = "File Name";
+			this.nameColumnHeader.Width = 120;
+			// 
+			// sizeColumnHeader
+			// 
+			this.sizeColumnHeader.Text = "Size";
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(456, 270);
+			this.BackColor = System.Drawing.SystemColors.Window;
+			this.ClientSize = new System.Drawing.Size(509, 298);
 			this.Controls.Add(this.fileListView);
 			this.Controls.Add(this.mainMenuStrip);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.mainMenuStrip;
 			this.Name = "MainForm";
 			this.Text = "Techno\'s IMG Editor - v{0}";
@@ -252,6 +279,8 @@
 		private System.Windows.Forms.ToolStripMenuItem largeIconToolStripMenuItem;
 		private System.Windows.Forms.ListView fileListView;
 		private System.Windows.Forms.ToolStripMenuItem smallIconToolStripMenuItem;
+		private System.Windows.Forms.ColumnHeader nameColumnHeader;
+		private System.Windows.Forms.ColumnHeader sizeColumnHeader;
 	}
 }
 

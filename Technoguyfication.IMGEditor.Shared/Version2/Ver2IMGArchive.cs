@@ -139,7 +139,7 @@ namespace Technoguyfication.IMGEditor.Version2
 		/// <param name="index">Index of the entry</param>
 		/// <returns></returns>
 		/// <exception cref="InvalidDirectoryEntryException"></exception>
-		private Ver2DirectoryEntry GetDirectoryEntry(ushort index)
+		public IDirectoryEntry GetDirectoryEntry(int index)
 		{
 			if (index >= FileCount)
 				throw new InvalidDirectoryEntryException();

@@ -19,6 +19,7 @@ namespace Technoguyfication.IMGEditor
 		void Bump(int amount);
 
 		IDirectoryEntry GetDirectoryEntry(string fileName);
+		IDirectoryEntry GetDirectoryEntry(int index);
 		List<IDirectoryEntry> GetDirectoryEntries();
 	}
 }
