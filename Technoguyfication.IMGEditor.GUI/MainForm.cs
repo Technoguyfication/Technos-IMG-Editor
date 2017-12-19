@@ -27,6 +27,7 @@ namespace Technoguyfication.IMGEditor.GUI
 
 			// set view mode
 			fileListView.View = Properties.Settings.Default.viewMode;
+
 		}
 
 		private void FileListView_RetreiveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
