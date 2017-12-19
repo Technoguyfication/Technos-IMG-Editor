@@ -15,6 +15,7 @@ namespace Technoguyfication.IMGEditor
 
 		uint Offset { get; set; }
 		uint Size { get; set; }
+		uint Index { get; set; }
 
 		byte[] GetBytes();
 	}

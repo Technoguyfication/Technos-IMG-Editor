@@ -87,6 +87,11 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
+		/// The index of the directory entry inside the archive
+		/// </summary>
+		public uint Index { get; set; }
+
+		/// <summary>
 		/// Returns a string containing information about the directory entry
 		/// </summary>
 		/// <returns></returns>
@@ -102,8 +107,9 @@ namespace Technoguyfication.IMGEditor.Version2
 		/// Create a directory entry from an array of 32 bytes
 		/// </summary>
 		/// <param name="bytes">An array containing exactly 32 bytes</param>
+		/// <param name="index">The index of the file entry inside the archive</param>
 		/// <returns></returns>
-		public static Ver2DirectoryEntry FromBytes(byte[] bytes)
+		public static Ver2DirectoryEntry FromBytes(byte[] bytes, int index)
 		{
 			if (bytes.Length != 32)
 			{

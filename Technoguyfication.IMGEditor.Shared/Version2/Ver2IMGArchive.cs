@@ -36,6 +36,12 @@ namespace Technoguyfication.IMGEditor.Version2
 		/// </summary>
 		public static readonly byte[] HEADER = new byte[] { 0x56, 0x45, 0x52, 0x32 };
 
+		/// <summary>
+		/// The offset of the directory at the beginning of the file.
+		/// It calculates as size of <see cref="HEADER"/> + size of <see cref="uint"/>
+		/// </summary>
+		public const int DIRECTORY_OFFSET = 8;
+
 		#endregion
 
 		private FileStream _fileStream;
@@ -153,7 +159,7 @@ namespace Technoguyfication.IMGEditor.Version2
 				_fileStream.Read(entryBytes, 0, DIRECTORY_ITEM_SIZE);
 			}
 
-			return Ver2DirectoryEntry.FromBytes(entryBytes);
+			return Ver2DirectoryEntry.FromBytes(entryBytes, index);
 		}
 
 		/// <summary>
@@ -256,6 +262,65 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
+		/// Deletes a file from the archive
+		/// </summary>
+		/// <param name="file"></param>
+		public void DeleteFile(IDirectoryEntry file)
+		{
+			lock (_fileStream)
+			{
+				if (!GetDirectoryEntries().Contains(file))
+					throw new ArgumentException("File is not contained inside the archive.");
+
+				// delete the file's directory entry
+				_fileStream.Seek((file.Index * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
+				_fileStream.Write(new byte[DIRECTORY_ITEM_SIZE], 0, DIRECTORY_ITEM_SIZE);
+				_fileStream.Flush();
+
+				// push each directory entry up by one
+				byte[] buffer = new byte[DIRECTORY_ITEM_SIZE];
+				byte[] blank = new byte[DIRECTORY_ITEM_SIZE];
+
+				for (int i = (int)file.Index + 1; i < FileCount; i++)
+				{
+					// read file data into buffer
+					_fileStream.Seek((i * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
+					_fileStream.Read(buffer, 0, buffer.Length);
+
+					// write it back in above it
+					_fileStream.Seek(((i - 1) * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
+					_fileStream.Write(buffer, 0, buffer.Length);
+
+					// clear data for old entry
+					_fileStream.Write(blank, 0, blank.Length);
+				}
+
+				// remove old file data
+				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
+				_fileStream.Write(new byte[file.Size * SECTOR_SIZE], 0, (int)file.Size * SECTOR_SIZE);
+
+				// done!
+				_fileStream.Flush();
+			}
+		}
+
+		/// <summary>
+		/// Deletes a file from the archive
+		/// </summary>
+		public void DeleteFile(string fileName)
+		{
+			DeleteFile(GetDirectoryEntry(fileName));
+		}
+
+		/// <summary>
+		/// Deletes a file from the archive
+		/// </summary>
+		public void DeleteFile(int index)
+		{
+			DeleteFile(GetDirectoryEntry(index));
+		}
+
+		/// <summary>
 		/// Opens a file from the archive
 		/// </summary>
 		/// <param name="file"></param>
@@ -295,6 +360,16 @@ namespace Technoguyfication.IMGEditor.Version2
 		public Stream OpenFile(string fileName)
 		{
 			return OpenFile(GetDirectoryEntry(fileName));
+		}
+
+		/// <summary>
+		/// Opens a file from the archvie
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public Stream OpenFile(int index)
+		{
+			return OpenFile(GetDirectoryEntry(index));
 		}
 
 		/// <summary>
