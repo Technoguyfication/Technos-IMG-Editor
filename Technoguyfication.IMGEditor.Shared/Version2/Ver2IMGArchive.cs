@@ -254,7 +254,7 @@ namespace Technoguyfication.IMGEditor.Version2
 				_fileStream.Seek(directoryEntryStart, SeekOrigin.Begin);
 				_fileStream.Write(entry.GetBytes(), 0, DIRECTORY_ITEM_SIZE);
 
-				FileCount = (ushort)(FileCount + 1);
+				FileCount = (FileCount + 1);
 
 				// done!
 				_fileStream.Flush();
@@ -272,6 +272,8 @@ namespace Technoguyfication.IMGEditor.Version2
 				if (!GetDirectoryEntries().Contains(file))
 					throw new ArgumentException("File is not contained inside the archive.");
 
+				FileCount = (FileCount - 1);
+
 				// delete the file's directory entry
 				_fileStream.Seek((file.Index * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
 				_fileStream.Write(new byte[DIRECTORY_ITEM_SIZE], 0, DIRECTORY_ITEM_SIZE);
@@ -281,7 +283,7 @@ namespace Technoguyfication.IMGEditor.Version2
 				byte[] buffer = new byte[DIRECTORY_ITEM_SIZE];
 				byte[] blank = new byte[DIRECTORY_ITEM_SIZE];
 
-				for (int i = (int)file.Index + 1; i < FileCount; i++)
+				for (int i = (int)file.Index + 1; i <= FileCount; i++)
 				{
 					// read file data into buffer
 					_fileStream.Seek((i * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);

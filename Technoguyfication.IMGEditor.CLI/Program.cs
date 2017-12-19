@@ -134,6 +134,32 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.WriteLine($"Added file {archiveFileName} ({fileStream.Length} bytes) to {Path.GetFileName(archivePath)}");
 						return true;
 					}
+				case "delete":
+					{
+						if (args.Length > 3)
+							break;
+
+						string archivePath = args[1];
+						string fileName = args[2];
+
+						// open the archive
+						var archive = AttemptToOpenArchive(archivePath);
+						if (archive == null)
+							return false;
+
+						try
+						{
+							archive.DeleteFile(fileName);
+						}
+						catch (Exception ex)
+						{
+							Console.WriteLine($"Error: {ex.Message}");
+							return true;
+						}
+
+						Console.WriteLine($"Delete \"{fileName}\" from the archive.");
+						return true;
+					}
 				case "extractall":
 					{
 						if (args.Length < 3)
@@ -400,6 +426,10 @@ namespace Technoguyfication.IMGEditor.CLI
 			// add
 			builder.AppendLine("\nAdd a file to an archive:");
 			builder.AppendLine($" > {AssemblyName} add (IMG file path) (file to add) [file name (default is original file name)]");
+
+			// delete
+			builder.AppendLine("\nDelete a file from an archive:");
+			builder.AppendLine($" > {AssemblyName} delete (IMG file path) (file to delete)");
 
 			// info
 			builder.AppendLine("\nGet info on an archive:");
