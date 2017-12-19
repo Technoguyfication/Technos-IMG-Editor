@@ -272,8 +272,6 @@ namespace Technoguyfication.IMGEditor.Version2
 				if (!GetDirectoryEntries().Contains(file))
 					throw new ArgumentException("File is not contained inside the archive.");
 
-				FileCount = (FileCount - 1);
-
 				// delete the file's directory entry
 				_fileStream.Seek((file.Index * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
 				_fileStream.Write(new byte[DIRECTORY_ITEM_SIZE], 0, DIRECTORY_ITEM_SIZE);
@@ -303,6 +301,7 @@ namespace Technoguyfication.IMGEditor.Version2
 
 				// done!
 				_fileStream.Flush();
+				FileCount = (FileCount - 1);
 			}
 		}
 

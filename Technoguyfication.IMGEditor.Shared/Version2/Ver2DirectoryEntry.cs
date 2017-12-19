@@ -128,7 +128,8 @@ namespace Technoguyfication.IMGEditor.Version2
 				Offset = BitConverter.ToUInt32(offsetBytes.ReverseIfBigEndian(), 0),
 				StreamingSize = BitConverter.ToUInt16(streamingSizeBytes.ReverseIfBigEndian(), 0),
 				InternalSize = BitConverter.ToUInt16(sizeBytes.ReverseIfBigEndian(), 0),
-				Name = nameBytes.ToNullTerminatedString()
+				Name = nameBytes.ToNullTerminatedString(),
+				Index = (uint)index
 			};
 
 			return entry;
