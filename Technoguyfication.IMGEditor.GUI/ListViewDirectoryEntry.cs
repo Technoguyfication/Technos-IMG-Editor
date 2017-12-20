@@ -30,7 +30,17 @@ namespace Technoguyfication.IMGEditor.GUI
 					break;
 			}
 
-			SubItems.Add(new ListViewSubItem(this, entry.Size.ToString()));	// size
+			// add size
+			string size;
+
+			if (entry.GetType() == typeof(Version2.Ver2DirectoryEntry))
+				size = $"{entry.Size} KiB";
+			else
+				size = entry.Size.ToString();
+			SubItems.Add(new ListViewSubItem(this, size));
+
+			// add ofset
+			SubItems.Add(new ListViewSubItem(this, $"0x{entry.Offset.ToString("X8")}"));
 		}
 	}
 }

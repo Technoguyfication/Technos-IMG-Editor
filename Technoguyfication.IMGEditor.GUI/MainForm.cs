@@ -13,7 +13,8 @@ namespace Technoguyfication.IMGEditor.GUI
 {
 	public partial class MainForm : Form
 	{
-		IIMGArchive currentArchive = null;
+		private string _currentOpenedFilePath = null;
+		private List<ListViewDirectoryEntry> _entries = new List<ListViewDirectoryEntry>();
 
 		public MainForm()
 		{
@@ -32,7 +33,33 @@ namespace Technoguyfication.IMGEditor.GUI
 
 		private void FileListView_RetreiveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			e.Item = new ListViewDirectoryEntry(currentArchive.GetDirectoryEntry(e.ItemIndex));
+			if (_entries == null)
+				PopulateEntries();
+
+			e.Item = _entries[e.ItemIndex];
+		}
+
+		/// <summary>
+		/// Populates <see cref="_entries"/> with file entries from the archive
+		/// </summary>
+		private void PopulateEntries()
+		{
+			using (IIMGArchive archive = GetArchive(_currentOpenedFilePath))
+			{
+				if (archive == null)
+					return;
+
+				// populate entries list
+				_entries.Clear();
+				archive.GetDirectoryEntries().ForEach((entry) =>
+				{
+					_entries.Add(new ListViewDirectoryEntry(entry));
+				});
+
+				// set up listview
+				fileListView.VirtualListSize = _entries.Count;
+				fileListView.Refresh();
+			}
 		}
 
 		/// <summary>
@@ -42,7 +69,7 @@ namespace Technoguyfication.IMGEditor.GUI
 		{
 			OpenFileDialog dialog = new OpenFileDialog()
 			{
-				InitialDirectory = (string)Properties.Settings.Default.lastDirectory,
+				InitialDirectory = Properties.Settings.Default.lastDirectory,
 				CheckFileExists = true,
 				CheckPathExists = true
 			};
@@ -57,38 +84,73 @@ namespace Technoguyfication.IMGEditor.GUI
 		}
 
 		/// <summary>
-		/// Opens an archive
+		/// Opens an archive in the program, closing any existing ones
 		/// </summary>
 		private void OpenArchive(string filePath)
 		{
-			try
-			{
-				currentArchive = IMGOpener.GetArchive(filePath);
-			}
-			catch (FileNotFoundException)
-			{
-				MessageBox.Show("File not found.", "IMG Editor", MessageBoxButtons.OK);
-				return;
-			}
-			catch (InvalidArchiveFormatException)
-			{
-				MessageBox.Show("Unrecognized IMG file format. It may be corrupted.", "IMG Editor", MessageBoxButtons.OK);
-				return;
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Unhandled error opening file. Please send the following to the app developer:\n\n{ex}");
-				return;
-			}
-
-			fileListView.VirtualListSize = (int)currentArchive.FileCount;
-			fileListView.Refresh();
+			_currentOpenedFilePath = filePath;
+			PopulateEntries();
 		}
 
+		/// <summary>
+		/// Returns an <see cref="IIMGArchive"/> for use
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <returns>An archive, or null if it failed</returns>
+		private IIMGArchive GetArchive(string filePath)
+		{
+			if (string.IsNullOrEmpty(filePath))
+				return null;
+
+			try
+			{
+				return IMGOpener.GetArchive(filePath);
+			}
+			catch (FileNotFoundException)			// file not found
+			{
+				MessageBox.Show($"The file \"{filePath}\" could not be found.", "IMG Editor", MessageBoxButtons.OK);
+				return null;
+			}
+			catch (InvalidArchiveFormatException)	// invalid archive
+			{
+				MessageBox.Show("Unrecognized IMG file format. It may be corrupted.", "IMG Editor", MessageBoxButtons.OK);
+				return null;
+			}
+			catch (IOException ex)					// probably in use by something else
+			{
+				if (MessageBox.Show($"Error opening\"{filePath}\": {ex.Message}", "IMG Editor", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+					return GetArchive(filePath);
+
+				return null;
+			}
+			catch (Exception ex)					// idfk
+			{
+				MessageBox.Show($"Unhandled error opening file:\n\n{ex}");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Sets the view mode of the item list
+		/// </summary>
+		/// <param name="view"></param>
 		private void SetListViewMode(View view)
 		{
 			Properties.Settings.Default.viewMode = view;
 			fileListView.View = view;
+		}
+
+		/// <summary>
+		/// Sets the sorting for items
+		/// </summary>
+		/// <param name="method"></param>
+		/// <param name="order"></param>
+		private void SetListViewSorting(SortMethod? method = null, SortOrder? order = null)
+		{
+			if (method != null)
+			{
+
+			}
 		}
 
 		private void OpenToolStripMenuItem_Click(object sender, EventArgs e)

@@ -46,5 +46,29 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
                 this["viewMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Ascending")]
+        public global::System.Windows.Forms.SortOrder sortOrder {
+            get {
+                return ((global::System.Windows.Forms.SortOrder)(this["sortOrder"]));
+            }
+            set {
+                this["sortOrder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int sortMethod {
+            get {
+                return ((int)(this["sortMethod"]));
+            }
+            set {
+                this["sortMethod"] = value;
+            }
+        }
     }
 }

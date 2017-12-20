@@ -8,5 +8,11 @@
     <Setting Name="viewMode" Type="System.Windows.Forms.View" Scope="User">
       <Value Profile="(Default)">Details</Value>
     </Setting>
+    <Setting Name="sortOrder" Type="System.Windows.Forms.SortOrder" Scope="User">
+      <Value Profile="(Default)">Ascending</Value>
+    </Setting>
+    <Setting Name="sortMethod" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
