@@ -46,16 +46,6 @@
 			this.detailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.largeIconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.smallIconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.viewHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.helpToolStripMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
-			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.fileListView = new System.Windows.Forms.ListView();
-			this.nameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.sizeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.largeFileIcons = new System.Windows.Forms.ImageList(this.components);
-			this.smallFileIcons = new System.Windows.Forms.ImageList(this.components);
-			this.offsetHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.sortingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.defaultSortingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +54,16 @@
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ascendingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.descendingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.viewHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.helpToolStripMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
+			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.fileListView = new System.Windows.Forms.ListView();
+			this.nameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.sizeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.offsetHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.largeFileIcons = new System.Windows.Forms.ImageList(this.components);
+			this.smallFileIcons = new System.Windows.Forms.ImageList(this.components);
 			this.mainMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -170,7 +170,7 @@
             this.largeIconToolStripMenuItem,
             this.smallIconToolStripMenuItem});
 			this.itemViewToolStripMenuItem.Name = "itemViewToolStripMenuItem";
-			this.itemViewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.itemViewToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.itemViewToolStripMenuItem.Text = "Item View";
 			// 
 			// detailsToolStripMenuItem
@@ -193,6 +193,61 @@
 			this.smallIconToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
 			this.smallIconToolStripMenuItem.Text = "Small Icons";
 			this.smallIconToolStripMenuItem.Click += new System.EventHandler(this.SmallIconToolStripMenuItem_Click);
+			// 
+			// sortingToolStripMenuItem
+			// 
+			this.sortingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defaultSortingToolStripMenuItem,
+            this.nameToolStripMenuItem,
+            this.sizeToolStripMenuItem,
+            this.offsetToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.ascendingToolStripMenuItem,
+            this.descendingToolStripMenuItem});
+			this.sortingToolStripMenuItem.Name = "sortingToolStripMenuItem";
+			this.sortingToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.sortingToolStripMenuItem.Text = "Sorting";
+			// 
+			// defaultSortingToolStripMenuItem
+			// 
+			this.defaultSortingToolStripMenuItem.Name = "defaultSortingToolStripMenuItem";
+			this.defaultSortingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.defaultSortingToolStripMenuItem.Text = "Default Sorting";
+			// 
+			// nameToolStripMenuItem
+			// 
+			this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
+			this.nameToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.nameToolStripMenuItem.Text = "Name";
+			// 
+			// sizeToolStripMenuItem
+			// 
+			this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
+			this.sizeToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.sizeToolStripMenuItem.Text = "Size";
+			// 
+			// offsetToolStripMenuItem
+			// 
+			this.offsetToolStripMenuItem.Name = "offsetToolStripMenuItem";
+			this.offsetToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.offsetToolStripMenuItem.Text = "Offset";
+			// 
+			// toolStripMenuItem1
+			// 
+			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(150, 6);
+			// 
+			// ascendingToolStripMenuItem
+			// 
+			this.ascendingToolStripMenuItem.Name = "ascendingToolStripMenuItem";
+			this.ascendingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.ascendingToolStripMenuItem.Text = "Ascending";
+			// 
+			// descendingToolStripMenuItem
+			// 
+			this.descendingToolStripMenuItem.Name = "descendingToolStripMenuItem";
+			this.descendingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.descendingToolStripMenuItem.Text = "Descending";
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -253,6 +308,11 @@
 			this.sizeColumnHeader.Text = "Size";
 			this.sizeColumnHeader.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// offsetHeader
+			// 
+			this.offsetHeader.Text = "Offset";
+			this.offsetHeader.Width = 90;
+			// 
 			// largeFileIcons
 			// 
 			this.largeFileIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("largeFileIcons.ImageStream")));
@@ -260,6 +320,7 @@
 			this.largeFileIcons.Images.SetKeyName(0, "image.png");
 			this.largeFileIcons.Images.SetKeyName(1, "model.png");
 			this.largeFileIcons.Images.SetKeyName(2, "unknown.png");
+			this.largeFileIcons.Images.SetKeyName(3, "animation.png");
 			// 
 			// smallFileIcons
 			// 
@@ -268,66 +329,7 @@
 			this.smallFileIcons.Images.SetKeyName(0, "image.png");
 			this.smallFileIcons.Images.SetKeyName(1, "model.png");
 			this.smallFileIcons.Images.SetKeyName(2, "unknown.png");
-			// 
-			// offsetHeader
-			// 
-			this.offsetHeader.Text = "Offset";
-			this.offsetHeader.Width = 90;
-			// 
-			// sortingToolStripMenuItem
-			// 
-			this.sortingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.defaultSortingToolStripMenuItem,
-            this.nameToolStripMenuItem,
-            this.sizeToolStripMenuItem,
-            this.offsetToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.ascendingToolStripMenuItem,
-            this.descendingToolStripMenuItem});
-			this.sortingToolStripMenuItem.Name = "sortingToolStripMenuItem";
-			this.sortingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.sortingToolStripMenuItem.Text = "Sorting";
-			// 
-			// defaultSortingToolStripMenuItem
-			// 
-			this.defaultSortingToolStripMenuItem.Name = "defaultSortingToolStripMenuItem";
-			this.defaultSortingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.defaultSortingToolStripMenuItem.Text = "Default Sorting";
-			// 
-			// nameToolStripMenuItem
-			// 
-			this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-			this.nameToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.nameToolStripMenuItem.Text = "Name";
-			// 
-			// sizeToolStripMenuItem
-			// 
-			this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
-			this.sizeToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.sizeToolStripMenuItem.Text = "Size";
-			// 
-			// offsetToolStripMenuItem
-			// 
-			this.offsetToolStripMenuItem.Name = "offsetToolStripMenuItem";
-			this.offsetToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.offsetToolStripMenuItem.Text = "Offset";
-			// 
-			// toolStripMenuItem1
-			// 
-			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(150, 6);
-			// 
-			// ascendingToolStripMenuItem
-			// 
-			this.ascendingToolStripMenuItem.Name = "ascendingToolStripMenuItem";
-			this.ascendingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.ascendingToolStripMenuItem.Text = "Ascending";
-			// 
-			// descendingToolStripMenuItem
-			// 
-			this.descendingToolStripMenuItem.Name = "descendingToolStripMenuItem";
-			this.descendingToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-			this.descendingToolStripMenuItem.Text = "Descending";
+			this.smallFileIcons.Images.SetKeyName(3, "animation.png");
 			// 
 			// MainForm
 			// 

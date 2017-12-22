@@ -25,6 +25,9 @@ namespace Technoguyfication.IMGEditor.GUI
 				case ".dff":
 					ImageIndex = 1;
 					break;
+				case ".ifp":
+					ImageIndex = 3;
+					break;
 				default:
 					ImageIndex = 2;
 					break;

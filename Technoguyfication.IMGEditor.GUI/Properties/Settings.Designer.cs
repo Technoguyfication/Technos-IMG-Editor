@@ -73,7 +73,7 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("140")]
+        [global::System.Configuration.DefaultSettingValueAttribute("150")]
         public int fileListNameColumnWidth {
             get {
                 return ((int)(this["fileListNameColumnWidth"]));

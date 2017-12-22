@@ -15,7 +15,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="fileListNameColumnWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">140</Value>
+      <Value Profile="(Default)">150</Value>
     </Setting>
     <Setting Name="fileListSizeColumnWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">60</Value>
