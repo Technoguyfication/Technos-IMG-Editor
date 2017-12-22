@@ -41,6 +41,7 @@ namespace Technoguyfication.IMGEditor.CLI
 			if (!ParseArgs(args))
 			{
 				Console.WriteLine($"Error in command syntax or invalid command specified. Run {AssemblyName} with no arguments for help.");
+				return;
 			}
 		}
 
@@ -318,7 +319,7 @@ namespace Technoguyfication.IMGEditor.CLI
 						Console.WriteLine($"Archive Info: {Path.GetFileName(archivePath)}:\n" +
 							$"  File Count: {archive.FileCount}\n" +
 							$"  Size: {filesizeMB.ToString("0.00")}MB\n" +
-							$"  Archive Type: {IMGOpener.GetFriendlyName(archive.GetType())}");
+							$"  Archive Type: {IMGUtility.GetFriendlyName(archive.GetType())}");
 
 						return true;
 					}
@@ -372,13 +373,13 @@ namespace Technoguyfication.IMGEditor.CLI
 		}
 
 		/// <summary>
-		/// Runs drag 'n drop for the specified file
+		/// Attemps to detect a drag 'n drop and process it
 		/// </summary>
 		/// <param name="filePath">Whether anything was done</param>
 		private static bool DragNDrop(string filePath)
 		{
 			// check if file is img archive
-			if (IMGOpener.IsValidArchive(filePath))
+			if (IMGUtility.IsValidArchive(filePath))
 			{
 				var archive = AttemptToOpenArchive(filePath);
 				if (archive == null)
@@ -393,7 +394,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				// extract each file
 				for (int i = 0; i < entries.Count; i++)
 				{
-					IMGUtilities.Extract(archive, entries[i].Name, outputDir, true);
+					IMGUtility.Extract(archive, entries[i].Name, outputDir, true);
 
 					bar.SetPercent(ProgressBar.GetPercent(i, entries.Count - 1));
 				}
@@ -457,21 +458,11 @@ namespace Technoguyfication.IMGEditor.CLI
 		{
 			try
 			{
-				return IMGOpener.GetArchive(filePath);
-			}
-			catch (FileNotFoundException)
-			{
-				Console.WriteLine($"File \"{filePath}\" not found.");
-				return null;
-			}
-			catch (IOException ex)
-			{
-				Console.WriteLine($"Error opening file:\n{ex}");
-				return null;
+				return IMGUtility.GetArchive(filePath);
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Unhandled exception opening file: {ex}");
+				Console.WriteLine($"Unable to open archive: {ex.Message}");
 				return null;
 			}
 		}
