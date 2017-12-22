@@ -57,7 +57,7 @@ namespace Technoguyfication.IMGEditor
 		/// <param name="outputDirectory"></param>
 		/// <param name="overwrite"></param>
 		/// <param name="outputFileName">The name of the output file</param>
-		public static void Extract(IIMGArchive archive, string fileName, string outputDirectory, bool overwrite, string outputFileName = null)
+		public static void ExtractFile(IIMGArchive archive, string fileName, string outputDirectory, bool overwrite, string outputFileName = null)
 		{
 			// get paths
 			Directory.CreateDirectory(outputDirectory);
@@ -91,9 +91,42 @@ namespace Technoguyfication.IMGEditor
 		/// <param name="outputDirectory"></param>
 		/// <param name="outputFileName"></param>
 		/// <exception cref="IOException"></exception>
-		public static void Extract(IIMGArchive archive, string fileName, string outputDirectory, string outputFileName = null)
+		public static void ExtractFile(IIMGArchive archive, string fileName, string outputDirectory, string outputFileName = null)
 		{
-			Extract(archive, fileName, outputDirectory, false, outputFileName);
+			ExtractFile(archive, fileName, outputDirectory, false, outputFileName);
+		}
+
+		/// <summary>
+		/// Adds a file to the archive, with the option of overwriting existing files.
+		/// </summary>
+		/// <param name="archive"></param>
+		/// <param name="filePath"></param>
+		/// <param name="overwrite"></param>
+		/// <param name="newName"></param>
+		/// <exception cref="ArgumentException">Thrown if the file is invalid or doesn't exist.</exception>
+		/// <exception cref="FileNotFoundException">Thrown if the input file does not exist</exception>
+		/// <exception cref="IOException">Thrown if the file cannot be accesed</exception>
+		public static void AddFile(IIMGArchive archive, string filePath, bool overwrite, string newName = null)
+		{
+			using (Stream fileStream = File.OpenRead(filePath))
+			{
+				archive.AddFile(newName ?? Path.GetFileName(filePath), fileStream, (uint)fileStream.Length, 0);
+			}
+		}
+
+		/// <summary>
+		/// Adds a file to the archive.
+		/// Will throw an <see cref="ArgumentException"/> if the file already exists.
+		/// </summary>
+		/// <param name="archive"></param>
+		/// <param name="filePath"></param>
+		/// <param name="newName"></param>
+		/// <exception cref="ArgumentException">Thrown if the file is invalid or doesn't exist.</exception>
+		/// <exception cref="FileNotFoundException">Thrown if the input file does not exist</exception>
+		/// <exception cref="IOException">Thrown if the file cannot be accesed</exception>
+		public static void AddFile(IIMGArchive archive, string filePath, string newName = null)
+		{
+			AddFile(archive, filePath, false, newName);
 		}
 	}
 }

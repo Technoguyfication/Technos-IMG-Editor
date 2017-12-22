@@ -280,6 +280,7 @@
 			// 
 			// fileListView
 			// 
+			this.fileListView.AllowDrop = true;
 			this.fileListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -298,6 +299,8 @@
 			this.fileListView.View = System.Windows.Forms.View.Details;
 			this.fileListView.VirtualMode = true;
 			this.fileListView.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.FileListView_RetreiveVirtualItem);
+			this.fileListView.DragDrop += new System.Windows.Forms.DragEventHandler(this.FileListView_DragDrop);
+			this.fileListView.DragEnter += new System.Windows.Forms.DragEventHandler(this.FileListView_DragEnter);
 			// 
 			// nameColumnHeader
 			// 

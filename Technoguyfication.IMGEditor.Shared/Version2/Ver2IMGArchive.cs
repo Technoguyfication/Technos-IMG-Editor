@@ -191,6 +191,15 @@ namespace Technoguyfication.IMGEditor.Version2
 				// find first sector containing data
 				var entries = GetDirectoryEntries();
 
+				// delete the file if it already exists
+				if (entries.Exists(file =>
+				{
+					return file.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase);
+				}))
+				{
+					DeleteFile(fileName);
+				}
+
 				// sort by data start ascending
 				entries.Sort((a, b) => { return (int)(a.Offset - b.Offset); });
 

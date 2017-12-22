@@ -13,7 +13,7 @@ namespace Technoguyfication.IMGEditor.GUI
 {
 	public partial class MainForm : Form
 	{
-		private string _currentOpenedFilePath = null;
+		private string _openedArchivePath = null;
 		private List<ListViewDirectoryEntry> _entries = new List<ListViewDirectoryEntry>();
 
 		public MainForm()
@@ -44,7 +44,7 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// </summary>
 		private void PopulateEntries()
 		{
-			using (IIMGArchive archive = GetArchive(_currentOpenedFilePath))
+			using (IIMGArchive archive = GetArchive(_openedArchivePath))
 			{
 				if (archive == null)
 					return;
@@ -95,7 +95,7 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// </summary>
 		private void OpenArchive(string filePath)
 		{
-			_currentOpenedFilePath = filePath;
+			_openedArchivePath = filePath;
 			PopulateEntries();
 		}
 
@@ -181,6 +181,53 @@ namespace Technoguyfication.IMGEditor.GUI
 		private void SmallIconToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SetListViewMode(View.SmallIcon);
+		}
+
+		private void FileListView_DragDrop(object sender, DragEventArgs e)
+		{
+			// check if a file is being dropped on
+			if (e.Data.GetFormats(false).Contains(DataFormats.FileDrop))
+			{
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+				// open the archive and start adding files
+				using (IIMGArchive archive = GetArchive(_openedArchivePath))
+				{
+					// get list of names
+					List<string> fileNames = new List<string>();
+					var entries = archive.GetDirectoryEntries();
+					foreach (var entry in entries)
+						fileNames.Add(entry.Name);
+
+					foreach (string filePath in files)
+					{
+						string fileName = Path.GetFileName(filePath);
+
+						// check if file exists
+						if (fileNames.Contains(fileName))
+						{
+							DialogResult result = MessageBox.Show($"Overwite file \"{fileName}\"?", "IMGEditor", MessageBoxButtons.YesNoCancel);
+							if (result == DialogResult.Cancel)
+								return;
+							else if (result == DialogResult.No)
+								continue;
+						}
+
+						// add the file
+						IMGUtility.AddFile(archive, filePath, true);
+					}
+				}
+
+				PopulateEntries();
+			}
+		}
+
+		private void FileListView_DragEnter(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				e.Effect = DragDropEffects.Copy;
+			}
 		}
 	}
 }

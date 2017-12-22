@@ -396,7 +396,7 @@ namespace Technoguyfication.IMGEditor.CLI
 				// extract each file
 				for (int i = 0; i < entries.Count; i++)
 				{
-					IMGUtility.Extract(archive, entries[i].Name, outputDir, true);
+					IMGUtility.ExtractFile(archive, entries[i].Name, outputDir, true);
 
 					bar.SetPercent(ProgressBar.GetPercent(i, entries.Count - 1));
 				}
