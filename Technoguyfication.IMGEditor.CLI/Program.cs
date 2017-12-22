@@ -243,6 +243,8 @@ namespace Technoguyfication.IMGEditor.CLI
 					}
 				case "extract":
 					{
+						// TODO: use IMGUtility.Extract for this instead
+
 						if (args.Length < 3)
 							break;
 

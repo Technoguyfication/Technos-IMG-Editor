@@ -23,7 +23,7 @@ namespace Technoguyfication.IMGEditor
 			if (Ver2IMGArchive.IsValidArchive(filePath))
 				return new Ver2IMGArchive(filePath);
 			else
-				throw new InvalidArchiveException("File did not match any known file types.");
+				throw new InvalidArchiveException("Unknown archive type. It may be corrupted.");
 		}
 
 		/// <summary>
@@ -50,22 +50,22 @@ namespace Technoguyfication.IMGEditor
 		}
 
 		/// <summary>
-		/// Extract a file from an archive to the file system
+		/// Extracts a file from an archive to a location on the disk, providing the option to overwrite existing files.
 		/// </summary>
 		/// <param name="archive"></param>
 		/// <param name="fileName"></param>
 		/// <param name="outputDirectory"></param>
-		/// <param name="outputFolder"></param>
 		/// <param name="overwrite"></param>
-		public static void Extract(IIMGArchive archive, string fileName, string outputDirectory, bool overwrite = false)
+		/// <param name="outputFileName">The name of the output file</param>
+		public static void Extract(IIMGArchive archive, string fileName, string outputDirectory, bool overwrite, string outputFileName = null)
 		{
-			// check if file exists
-			if (File.Exists(outputDirectory) && !overwrite)
-				throw new ArgumentException("File already exists.");
-
 			// get paths
 			Directory.CreateDirectory(outputDirectory);
-			string outputPath = Path.Combine(outputDirectory, fileName);
+			string outputPath = Path.Combine(outputDirectory, outputFileName ?? fileName);
+
+			// check if file exists
+			if (File.Exists(outputPath) && !overwrite)
+				throw new IOException("The file specified already exists.");
 
 			// open file streams
 			var outputStream = File.Create(outputPath);
@@ -80,6 +80,20 @@ namespace Technoguyfication.IMGEditor
 
 			// finish
 			outputStream.Flush();
+		}
+
+		/// <summary>
+		/// Extracts a file from an archive to a location on the disk.
+		/// Will throw an <see cref="IOException"/> if the file already exists.
+		/// </summary>
+		/// <param name="archive"></param>
+		/// <param name="fileName"></param>
+		/// <param name="outputDirectory"></param>
+		/// <param name="outputFileName"></param>
+		/// <exception cref="IOException"></exception>
+		public static void Extract(IIMGArchive archive, string fileName, string outputDirectory, string outputFileName = null)
+		{
+			Extract(archive, fileName, outputDirectory, false, outputFileName);
 		}
 	}
 }
