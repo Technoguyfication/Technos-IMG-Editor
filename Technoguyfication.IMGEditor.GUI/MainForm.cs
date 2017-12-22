@@ -128,7 +128,7 @@ namespace Technoguyfication.IMGEditor.GUI
 			// probably in use by something else
 			catch (IOException ex)
 			{
-				if (MessageBox.Show($"Error opening\"{filePath}\": {ex.Message}", "IMG Editor", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+				if (MessageBox.Show(ex.Message, "IMG Editor", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
 					return GetArchive(filePath);
 
 				return null;
