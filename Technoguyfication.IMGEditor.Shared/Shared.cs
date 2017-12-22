@@ -75,7 +75,7 @@ namespace Technoguyfication.IMGEditor
 	}
 
 	/// <summary>
-	/// Exception that is thrown when an archive file is invalid
+	/// Thrown when an archive has an invalid or corrupted format
 	/// </summary>
 	[Serializable]
 	public class InvalidArchiveException : Exception

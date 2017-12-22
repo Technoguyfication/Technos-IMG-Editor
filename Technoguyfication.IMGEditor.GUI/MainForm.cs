@@ -104,7 +104,7 @@ namespace Technoguyfication.IMGEditor.GUI
 
 			try
 			{
-				return IMGOpener.GetArchive(filePath);
+				return IMGUtility.GetArchive(filePath);
 			}
 			catch (FileNotFoundException)			// file not found
 			{
