@@ -74,25 +74,16 @@ namespace Technoguyfication.IMGEditor
 		}
 	}
 
+	/// <summary>
+	/// Exception that is thrown when an archive file is invalid
+	/// </summary>
 	[Serializable]
-	public class InvalidArchiveFormatException : Exception
+	public class InvalidArchiveException : Exception
 	{
-		public InvalidArchiveFormatException() { }
-		public InvalidArchiveFormatException(string message) : base(message) { }
-		public InvalidArchiveFormatException(string message, Exception inner) : base(message, inner) { }
-		protected InvalidArchiveFormatException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-	}
-
-
-	[Serializable]
-	public class InvalidDirectoryEntryException : Exception
-	{
-		public InvalidDirectoryEntryException() { }
-		public InvalidDirectoryEntryException(string message) : base(message) { }
-		public InvalidDirectoryEntryException(string message, Exception inner) : base(message, inner) { }
-		protected InvalidDirectoryEntryException(
+		public InvalidArchiveException() { }
+		public InvalidArchiveException(string message) : base(message) { }
+		public InvalidArchiveException(string message, Exception inner) : base(message, inner) { }
+		protected InvalidArchiveException(
 		  System.Runtime.Serialization.SerializationInfo info,
 		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}

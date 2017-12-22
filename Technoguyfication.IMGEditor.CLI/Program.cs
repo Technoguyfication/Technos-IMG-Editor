@@ -268,9 +268,9 @@ namespace Technoguyfication.IMGEditor.CLI
 						{
 							inputStream = archive.OpenFile(internalFileName);
 						}
-						catch (InvalidDirectoryEntryException)
+						catch (ArgumentException ex)
 						{
-							Console.WriteLine($"File \"{internalFileName}\" does not exist inside archive.");
+							Console.WriteLine($"Error extracting file: {ex.Message}");
 							return true;
 						}
 

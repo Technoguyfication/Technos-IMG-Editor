@@ -5,14 +5,23 @@
     <Setting Name="lastDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.</Value>
     </Setting>
-    <Setting Name="viewMode" Type="System.Windows.Forms.View" Scope="User">
+    <Setting Name="fileListViewMode" Type="System.Windows.Forms.View" Scope="User">
       <Value Profile="(Default)">Details</Value>
     </Setting>
-    <Setting Name="sortOrder" Type="System.Windows.Forms.SortOrder" Scope="User">
+    <Setting Name="fileListSortOrder" Type="System.Windows.Forms.SortOrder" Scope="User">
       <Value Profile="(Default)">Ascending</Value>
     </Setting>
-    <Setting Name="sortMethod" Type="System.Int32" Scope="User">
+    <Setting Name="fileListSortMethod" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="fileListNameColumnWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">140</Value>
+    </Setting>
+    <Setting Name="fileListSizeColumnWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="fileListOffsetColumnWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">90</Value>
     </Setting>
   </Settings>
 </SettingsFile>

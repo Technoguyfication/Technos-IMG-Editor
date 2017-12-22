@@ -38,36 +38,72 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Details")]
-        public global::System.Windows.Forms.View viewMode {
+        public global::System.Windows.Forms.View fileListViewMode {
             get {
-                return ((global::System.Windows.Forms.View)(this["viewMode"]));
+                return ((global::System.Windows.Forms.View)(this["fileListViewMode"]));
             }
             set {
-                this["viewMode"] = value;
+                this["fileListViewMode"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Ascending")]
-        public global::System.Windows.Forms.SortOrder sortOrder {
+        public global::System.Windows.Forms.SortOrder fileListSortOrder {
             get {
-                return ((global::System.Windows.Forms.SortOrder)(this["sortOrder"]));
+                return ((global::System.Windows.Forms.SortOrder)(this["fileListSortOrder"]));
             }
             set {
-                this["sortOrder"] = value;
+                this["fileListSortOrder"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int sortMethod {
+        public int fileListSortMethod {
             get {
-                return ((int)(this["sortMethod"]));
+                return ((int)(this["fileListSortMethod"]));
             }
             set {
-                this["sortMethod"] = value;
+                this["fileListSortMethod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("140")]
+        public int fileListNameColumnWidth {
+            get {
+                return ((int)(this["fileListNameColumnWidth"]));
+            }
+            set {
+                this["fileListNameColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int fileListSizeColumnWidth {
+            get {
+                return ((int)(this["fileListSizeColumnWidth"]));
+            }
+            set {
+                this["fileListSizeColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("90")]
+        public int fileListOffsetColumnWidth {
+            get {
+                return ((int)(this["fileListOffsetColumnWidth"]));
+            }
+            set {
+                this["fileListOffsetColumnWidth"] = value;
             }
         }
     }

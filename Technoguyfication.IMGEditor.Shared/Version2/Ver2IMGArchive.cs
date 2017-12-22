@@ -99,7 +99,7 @@ namespace Technoguyfication.IMGEditor.Version2
 		public Ver2IMGArchive(string filePath)
 		{
 			if (!IsValidArchive(filePath))
-				throw new InvalidArchiveFormatException();
+				throw new InvalidArchiveException();
 
 			SetupStream(filePath);
 			FileInfo = new FileInfo(_filePath);
@@ -119,9 +119,8 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Enumerates all the directory entries in the file and returns them in a List
+		/// <see cref="IIMGArchive.GetDirectoryEntries"/>
 		/// </summary>
-		/// <returns></returns>
 		public List<IDirectoryEntry> GetDirectoryEntries()
 		{
 			lock (_fileStream)
@@ -140,15 +139,12 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Gets the entry at the specified index
+		/// <see cref="IIMGArchive.GetDirectoryEntry(int)"/>
 		/// </summary>
-		/// <param name="index">Index of the entry</param>
-		/// <returns></returns>
-		/// <exception cref="InvalidDirectoryEntryException"></exception>
 		public IDirectoryEntry GetDirectoryEntry(int index)
 		{
 			if (index >= FileCount)
-				throw new InvalidDirectoryEntryException();
+				throw new ArgumentException("File index out of range.", "index");
 
 			byte[] entryBytes = new byte[DIRECTORY_ITEM_SIZE];
 
@@ -163,32 +159,32 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Gets the entry with the specified file name
+		/// <see cref="IIMGArchive.GetDirectoryEntry(string)"/>
 		/// </summary>
-		/// <param name="fileName"></param>
-		/// <returns></returns>
 		public IDirectoryEntry GetDirectoryEntry(string fileName)
 		{
-			var entry = GetDirectoryEntries().Find((e) => { return e.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase); });
+			// find the entry
+			var entry = GetDirectoryEntries().Find((e) =>
+			{
+				return e.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase);
+			});
 
 			if (entry == null)
-				throw new InvalidDirectoryEntryException("Directory entry does not exist");
+				throw new ArgumentException("File does not exist inside archive.", "index");
 			else
 				return entry;
 		}
 
 		/// <summary>
-		/// Appends a file to the archive
+		/// <see cref="IIMGArchive.AddFile(string, Stream, uint, uint)" />
 		/// </summary>
-		/// <param name="fileName"></param>
-		/// <param name="dataStream">A stream containing the file data</param>
-		public void AddFile(string fileName, Stream dataStream, uint length, uint offset)
+		public IDirectoryEntry AddFile(string fileName, Stream dataStream, uint length, uint offset)
 		{
 			if (Encoding.ASCII.GetByteCount(fileName) > MAX_DIRECTORY_FILE_NAME)
-				throw new ArgumentException($"Name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes");
+				throw new ArgumentException($"File name cannot be longer than {MAX_DIRECTORY_FILE_NAME} bytes", "fileName");
 
 			if (length + offset > dataStream.Length)
-				throw new ArgumentException("Data to read exceeds file size");
+				throw new ArgumentException("Data length exceeds stream length", "length");
 
 			lock (_fileStream)
 			{
@@ -258,19 +254,65 @@ namespace Technoguyfication.IMGEditor.Version2
 
 				// done!
 				_fileStream.Flush();
+				return entry;
 			}
 		}
 
 		/// <summary>
-		/// Deletes a file from the archive
+		/// <see cref="IIMGArchive.OpenFile(IDirectoryEntry)"/>
 		/// </summary>
-		/// <param name="file"></param>
+		public Stream OpenFile(IDirectoryEntry file)
+		{
+			lock (_fileStream)
+			{
+				if (!GetDirectoryEntries().Contains(file))
+					throw new ArgumentException("Files does not exist in archive.", "file");
+
+				// create output stream
+				MemoryStream outStream = new MemoryStream();
+
+				byte[] buffer = new byte[SECTOR_SIZE];
+				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
+
+				// read from file stream to out stream
+				for (int i = 0; i < file.Size; i++)
+				{
+					_fileStream.Read(buffer, 0, SECTOR_SIZE);
+					outStream.Write(buffer, 0, SECTOR_SIZE);
+				}
+
+				// flush stream to make sure it's full
+				outStream.Flush();
+
+				return outStream;
+			}
+		}
+
+		/// <summary>
+		/// <see cref="IIMGArchive.OpenFile(int)"/>
+		/// </summary>
+		public Stream OpenFile(int index)
+		{
+			return OpenFile(GetDirectoryEntry(index));
+		}
+
+		/// <summary>
+		/// <see cref="IIMGArchive.OpenFile(string)"/>
+		/// </summary>
+		public Stream OpenFile(string fileName)
+		{
+			return OpenFile(GetDirectoryEntry(fileName));
+		}
+
+		/// <summary>
+		/// <see cref="IIMGArchive.OpenFile(IDirectoryEntry)"/>
+		/// </summary>
 		public void DeleteFile(IDirectoryEntry file)
 		{
 			lock (_fileStream)
 			{
 				if (!GetDirectoryEntries().Contains(file))
-					throw new ArgumentException("File is not contained inside the archive.");
+					throw new ArgumentException("File is not contained inside the archive.", "file");
 
 				// delete the file's directory entry
 				_fileStream.Seek((file.Index * DIRECTORY_ITEM_SIZE) + DIRECTORY_OFFSET, SeekOrigin.Begin);
@@ -306,7 +348,7 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Deletes a file from the archive
+		/// <see cref="IIMGArchive.OpenFile(string)"/>
 		/// </summary>
 		public void DeleteFile(string fileName)
 		{
@@ -314,7 +356,7 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Deletes a file from the archive
+		/// <see cref="IIMGArchive.OpenFile(int)"/>
 		/// </summary>
 		public void DeleteFile(int index)
 		{
@@ -322,61 +364,8 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Opens a file from the archive
+		/// <see cref="IIMGArchive.Defragment(IProgress{ProgressUpdate})"/>
 		/// </summary>
-		/// <param name="file"></param>
-		/// <returns></returns>
-		public Stream OpenFile(IDirectoryEntry file)
-		{
-			lock (_fileStream)
-			{
-				if (!GetDirectoryEntries().Contains(file))
-					throw new ArgumentException("File is not contained inside the archive.");
-
-				// create output stream
-				MemoryStream outStream = new MemoryStream();
-
-				byte[] buffer = new byte[SECTOR_SIZE];
-				_fileStream.Seek(file.Offset * SECTOR_SIZE, SeekOrigin.Begin);
-
-				// read from file stream to out stream
-				for (int i = 0; i < file.Size; i++)
-				{
-					_fileStream.Read(buffer, 0, SECTOR_SIZE);
-					outStream.Write(buffer, 0, SECTOR_SIZE);
-				}
-
-				// flush stream to make sure it's full
-				outStream.Flush();
-
-				return outStream;
-			}
-		}
-
-		/// <summary>
-		/// Opens a file from the archive
-		/// </summary>
-		/// <param name="fileName"></param>
-		/// <returns></returns>
-		public Stream OpenFile(string fileName)
-		{
-			return OpenFile(GetDirectoryEntry(fileName));
-		}
-
-		/// <summary>
-		/// Opens a file from the archvie
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public Stream OpenFile(int index)
-		{
-			return OpenFile(GetDirectoryEntry(index));
-		}
-
-		/// <summary>
-		/// Defragment the IMG archive, this may take a very long time
-		/// </summary>
-		/// <param name="progress">A <see cref="Progress{T}"/> to track defrag progress</param>
 		public void Defragment(IProgress<ProgressUpdate> progress = null)
 		{
 			lock (_fileStream)
@@ -418,10 +407,8 @@ namespace Technoguyfication.IMGEditor.Version2
 			}
 		}
 
-
 		/// <summary>
-		/// Sends directory entries from the beginning of the directory list to the end, moving their data.
-		/// Useful for making more space for appending directory entries.
+		/// <see cref="IIMGArchive.Bump(int)"/>
 		/// </summary>
 		public void Bump(int amount)
 		{
@@ -429,7 +416,7 @@ namespace Technoguyfication.IMGEditor.Version2
 				return;
 
 			if (FileCount < amount)
-				throw new InvalidDirectoryEntryException("Cannot shift more than the amount of existing files.");
+				throw new ArgumentException("Amount of entries to shift was out of range", "amount");
 
 			lock (_fileStream)
 			{
@@ -517,16 +504,6 @@ namespace Technoguyfication.IMGEditor.Version2
 		}
 
 		/// <summary>
-		/// Set up the file stream for this instance
-		/// </summary>
-		/// <param name="archivePath"></param>
-		private void SetupStream(string archivePath)
-		{
-			_filePath = archivePath;
-			_fileStream = new FileStream(archivePath, FileMode.Open, FileAccess.ReadWrite);
-		}
-
-		/// <summary>
 		/// Checks if an IMG file is valid for this format
 		/// </summary>
 		/// <param name="filePath"></param>
@@ -547,6 +524,16 @@ namespace Technoguyfication.IMGEditor.Version2
 
 			stream.Dispose();
 			return true;
+		}
+
+		/// <summary>
+		/// Set up the file stream for this instance
+		/// </summary>
+		/// <param name="archivePath"></param>
+		private void SetupStream(string archivePath)
+		{
+			_filePath = archivePath;
+			_fileStream = new FileStream(archivePath, FileMode.Open, FileAccess.ReadWrite);
 		}
 	}
 }

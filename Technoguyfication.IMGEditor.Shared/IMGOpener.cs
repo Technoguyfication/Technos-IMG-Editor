@@ -23,7 +23,7 @@ namespace Technoguyfication.IMGEditor
 			if (Ver2IMGArchive.IsValidArchive(filePath))
 				return new Ver2IMGArchive(filePath);
 			else
-				throw new InvalidArchiveFormatException("File did not match any known file types.");
+				throw new InvalidArchiveException("File did not match any known file types.");
 		}
 
 		/// <summary>

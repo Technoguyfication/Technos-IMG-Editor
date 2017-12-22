@@ -27,7 +27,7 @@ namespace Technoguyfication.IMGEditor.GUI
 			Text = string.Format(Text, Application.ProductVersion);
 
 			// set view mode
-			fileListView.View = Properties.Settings.Default.viewMode;
+			fileListView.View = Properties.Settings.Default.fileListViewMode;
 
 		}
 
@@ -111,7 +111,7 @@ namespace Technoguyfication.IMGEditor.GUI
 				MessageBox.Show($"The file \"{filePath}\" could not be found.", "IMG Editor", MessageBoxButtons.OK);
 				return null;
 			}
-			catch (InvalidArchiveFormatException)	// invalid archive
+			catch (InvalidArchiveException)	// invalid archive
 			{
 				MessageBox.Show("Unrecognized IMG file format. It may be corrupted.", "IMG Editor", MessageBoxButtons.OK);
 				return null;
@@ -136,7 +136,7 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// <param name="view"></param>
 		private void SetListViewMode(View view)
 		{
-			Properties.Settings.Default.viewMode = view;
+			Properties.Settings.Default.fileListViewMode = view;
 			fileListView.View = view;
 		}
 
