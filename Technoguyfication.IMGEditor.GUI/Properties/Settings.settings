@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Technoguyfication.IMGEditor.GUI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="lastDirectory" Type="System.String" Scope="User">
+    <Setting Name="openFileLastDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.</Value>
     </Setting>
     <Setting Name="fileListViewMode" Type="System.Windows.Forms.View" Scope="User">
@@ -22,6 +22,9 @@
     </Setting>
     <Setting Name="fileListOffsetColumnWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">90</Value>
+    </Setting>
+    <Setting Name="openFileFilterIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -26,12 +26,12 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(".")]
-        public string lastDirectory {
+        public string openFileLastDirectory {
             get {
-                return ((string)(this["lastDirectory"]));
+                return ((string)(this["openFileLastDirectory"]));
             }
             set {
-                this["lastDirectory"] = value;
+                this["openFileLastDirectory"] = value;
             }
         }
         
@@ -104,6 +104,18 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
             }
             set {
                 this["fileListOffsetColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int openFileFilterIndex {
+            get {
+                return ((int)(this["openFileFilterIndex"]));
+            }
+            set {
+                this["openFileFilterIndex"] = value;
             }
         }
     }

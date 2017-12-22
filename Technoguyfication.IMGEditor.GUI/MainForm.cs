@@ -67,24 +67,31 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// </summary>
 		private void PromptOpenArchive()
 		{
-			OpenFileDialog dialog = new OpenFileDialog()
+			// create dialog
+			using (OpenFileDialog dialog = new OpenFileDialog()
 			{
-				InitialDirectory = Properties.Settings.Default.lastDirectory,
+				InitialDirectory = Properties.Settings.Default.openFileLastDirectory,
 				CheckFileExists = true,
-				CheckPathExists = true
-			};
+				CheckPathExists = true,
+				Filter = "IMG Archives (*.img, *.dir)|*.img|All files (*.*)|*.*",
+				FilterIndex = Properties.Settings.Default.openFileFilterIndex
+			})
+			{
 
-			DialogResult result = dialog.ShowDialog();
-			if (result != DialogResult.OK)
-				return;
+				DialogResult result = dialog.ShowDialog();
+				if (result != DialogResult.OK)
+					return;
 
-			Properties.Settings.Default.lastDirectory = Path.GetDirectoryName(dialog.FileName);
+				// save last used settings
+				Properties.Settings.Default.openFileLastDirectory = Path.GetDirectoryName(dialog.FileName);
+				Properties.Settings.Default.openFileFilterIndex = dialog.FilterIndex;
 
-			OpenArchive(dialog.FileName);
+				OpenArchive(dialog.FileName);
+			}
 		}
 
 		/// <summary>
-		/// Opens an archive in the program, closing any existing ones
+		/// Opens an archive
 		/// </summary>
 		private void OpenArchive(string filePath)
 		{
@@ -106,24 +113,27 @@ namespace Technoguyfication.IMGEditor.GUI
 			{
 				return IMGUtility.GetArchive(filePath);
 			}
-			catch (FileNotFoundException)			// file not found
+			// file not found
+			catch (FileNotFoundException)
 			{
 				MessageBox.Show($"The file \"{filePath}\" could not be found.", "IMG Editor", MessageBoxButtons.OK);
 				return null;
 			}
-			catch (InvalidArchiveException)	// invalid archive
+			// invalid archive
+			catch (InvalidArchiveException ex)
 			{
-				MessageBox.Show("Unrecognized IMG file format. It may be corrupted.", "IMG Editor", MessageBoxButtons.OK);
+				MessageBox.Show(ex.Message, "IMG Editor", MessageBoxButtons.OK);
 				return null;
 			}
-			catch (IOException ex)					// probably in use by something else
+			// probably in use by something else
+			catch (IOException ex)
 			{
 				if (MessageBox.Show($"Error opening\"{filePath}\": {ex.Message}", "IMG Editor", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
 					return GetArchive(filePath);
 
 				return null;
 			}
-			catch (Exception ex)					// idfk
+			catch (Exception ex)
 			{
 				MessageBox.Show($"Unhandled error opening file:\n\n{ex}");
 				return null;
