@@ -96,9 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="IMGEditor GUI.ico" />
-    <None Include="Resources\image.png" />
-    <None Include="Resources\unknown.png" />
-    <None Include="Resources\model.png" />
+    <None Include="Resources\database_edit.png" />
     <None Include="Resources\help.png" />
     <None Include="Resources\database_add.png" />
     <None Include="Resources\page_add.png" />

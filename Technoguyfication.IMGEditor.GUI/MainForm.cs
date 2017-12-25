@@ -55,6 +55,14 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// </summary>
 		private void PopulateEntries()
 		{
+			// clear view if nothing is opened
+			if (!IsArchiveOpened)
+			{
+				_entries.Clear();
+				fileListView.VirtualListSize = 0;
+				fileListView.Refresh();
+			}
+
 			using (IIMGArchive archive = GetArchive(_openedArchivePath))
 			{
 				if (archive == null)
@@ -196,14 +204,14 @@ namespace Technoguyfication.IMGEditor.GUI
 
 		private void FileListView_DragDrop(object sender, DragEventArgs e)
 		{
-			// check if a file is being dropped in
+			// handle file dropping
 			if (e.Data.GetFormats(false).Contains(DataFormats.FileDrop))
 			{
-				// if an archive is opened, copy the file into the archive
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+				// if an archive is opened, copy the file(s) into the archive
 				if (IsArchiveOpened)
 				{
-					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
 					// open the archive and start adding files
 					using (IIMGArchive archive = GetArchive(_openedArchivePath))
 					{
@@ -231,24 +239,65 @@ namespace Technoguyfication.IMGEditor.GUI
 							IMGUtility.AddFile(archive, filePath, true);
 						}
 					}
-				}
 
-				PopulateEntries();
+					PopulateEntries();
+				}
+				// otherwise, check if we're dropping an archive file onto the program and open it
+				else if (IMGUtility.IsValidArchive(files[0]))
+				{
+					OpenArchive(files[0]);
+				}
 			}
 		}
 
 		private void FileListView_DragEnter(object sender, DragEventArgs e)
 		{
-			// allow copy if it's a file
+			// check if the data is a file
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				e.Effect = DragDropEffects.Copy;
+				// if an archive is opened, drop the file in
+				if (IsArchiveOpened)
+				{
+					e.Effect = DragDropEffects.Copy;
+				}
+				// otherwise, checl if it's an archive we can open
+				else
+				{
+					string[] fileNames = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+					// if we're just dragging on archive file on top, allow drop
+					if (fileNames.Length == 1 && IMGUtility.IsValidArchive(fileNames[0]))
+						e.Effect = DragDropEffects.Copy;
+				}
 			}
 		}
 
 		private void RefreshToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			PopulateEntries();
+		}
+
+		private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenArchive(null);
+		}
+
+		private void FileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+		{
+			// close button
+			closeToolStripMenuItem.Enabled = IsArchiveOpened;
+
+			// extract and add buttons
+			extractToolStripMenuItem.Enabled = (IsArchiveOpened && fileListView.SelectedIndices.Count > 0);	// items must be selected for this one
+
+			extractAlllToolStripMenuItem.Enabled =
+				addFilesToolStripMenuItem.Enabled = IsArchiveOpened;
+		}
+
+		private void ToolToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+		{
+			// archive info
+			archiveInfoToolStripMenuItem.Enabled = IsArchiveOpened;
 		}
 	}
 }
