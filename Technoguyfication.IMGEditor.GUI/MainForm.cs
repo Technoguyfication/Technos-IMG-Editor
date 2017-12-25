@@ -16,6 +16,17 @@ namespace Technoguyfication.IMGEditor.GUI
 		private string _openedArchivePath = null;
 		private List<ListViewDirectoryEntry> _entries = new List<ListViewDirectoryEntry>();
 
+		/// <summary>
+		/// Tells whether or not the application has an archive opened.
+		/// </summary>
+		public bool IsArchiveOpened
+		{
+			get
+			{
+				return _openedArchivePath != null;
+			}
+		}
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -185,36 +196,40 @@ namespace Technoguyfication.IMGEditor.GUI
 
 		private void FileListView_DragDrop(object sender, DragEventArgs e)
 		{
-			// check if a file is being dropped on
+			// check if a file is being dropped in
 			if (e.Data.GetFormats(false).Contains(DataFormats.FileDrop))
 			{
-				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-				// open the archive and start adding files
-				using (IIMGArchive archive = GetArchive(_openedArchivePath))
+				// if an archive is opened, copy the file into the archive
+				if (IsArchiveOpened)
 				{
-					// get list of names
-					List<string> fileNames = new List<string>();
-					var entries = archive.GetDirectoryEntries();
-					foreach (var entry in entries)
-						fileNames.Add(entry.Name);
+					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-					foreach (string filePath in files)
+					// open the archive and start adding files
+					using (IIMGArchive archive = GetArchive(_openedArchivePath))
 					{
-						string fileName = Path.GetFileName(filePath);
+						// get list of names
+						List<string> fileNames = new List<string>();
+						var entries = archive.GetDirectoryEntries();
+						foreach (var entry in entries)
+							fileNames.Add(entry.Name);
 
-						// check if file exists
-						if (fileNames.Contains(fileName))
+						foreach (string filePath in files)
 						{
-							DialogResult result = MessageBox.Show($"Overwite file \"{fileName}\"?", "IMGEditor", MessageBoxButtons.YesNoCancel);
-							if (result == DialogResult.Cancel)
-								return;
-							else if (result == DialogResult.No)
-								continue;
-						}
+							string fileName = Path.GetFileName(filePath);
 
-						// add the file
-						IMGUtility.AddFile(archive, filePath, true);
+							// check if file exists
+							if (fileNames.Contains(fileName))
+							{
+								DialogResult result = MessageBox.Show($"Overwite file \"{fileName}\"?", "IMGEditor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+								if (result == DialogResult.Cancel)
+									return;
+								else if (result == DialogResult.No)
+									continue;
+							}
+
+							// add the file
+							IMGUtility.AddFile(archive, filePath, true);
+						}
 					}
 				}
 
@@ -224,10 +239,16 @@ namespace Technoguyfication.IMGEditor.GUI
 
 		private void FileListView_DragEnter(object sender, DragEventArgs e)
 		{
+			// allow copy if it's a file
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
 				e.Effect = DragDropEffects.Copy;
 			}
+		}
+
+		private void RefreshToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			PopulateEntries();
 		}
 	}
 }

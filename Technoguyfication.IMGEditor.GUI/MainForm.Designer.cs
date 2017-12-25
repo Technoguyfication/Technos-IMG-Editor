@@ -64,6 +64,7 @@
 			this.offsetHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.largeFileIcons = new System.Windows.Forms.ImageList(this.components);
 			this.smallFileIcons = new System.Windows.Forms.ImageList(this.components);
+			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -150,6 +151,8 @@
 			// 
 			// editToolStripMenuItem
 			// 
+			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.refreshToolStripMenuItem});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this.editToolStripMenuItem.Text = "&Edit";
@@ -335,6 +338,13 @@
 			this.smallFileIcons.Images.SetKeyName(2, "unknown.png");
 			this.smallFileIcons.Images.SetKeyName(3, "animation.png");
 			// 
+			// refreshToolStripMenuItem
+			// 
+			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.refreshToolStripMenuItem.Text = "&Refresh";
+			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -391,6 +401,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem ascendingToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem descendingToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
 	}
 }
 
