@@ -109,7 +109,8 @@
 			// 
 			this.openToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.database_edit;
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
 			// 
@@ -126,7 +127,7 @@
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// editToolStripMenuItem
@@ -140,7 +141,8 @@
 			// refreshToolStripMenuItem
 			// 
 			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+			this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.refreshToolStripMenuItem.Text = "&Refresh";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItem_Click);
 			// 
@@ -343,13 +345,15 @@
 			// 
 			this.newToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.database_add;
 			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-			this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.newToolStripMenuItem.Text = "&New...";
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.closeToolStripMenuItem.Text = "&Close";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.CloseToolStripMenuItem_Click);
 			// 
@@ -357,21 +361,23 @@
 			// 
 			this.extractToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.page_white_get;
 			this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
-			this.extractToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.extractToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+			this.extractToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
 			this.extractToolStripMenuItem.Text = "&Extract...";
 			// 
 			// extractAlllToolStripMenuItem
 			// 
 			this.extractAlllToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.folder_go;
 			this.extractAlllToolStripMenuItem.Name = "extractAlllToolStripMenuItem";
-			this.extractAlllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.extractAlllToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
 			this.extractAlllToolStripMenuItem.Text = "Extract All...";
 			// 
 			// addFilesToolStripMenuItem
 			// 
 			this.addFilesToolStripMenuItem.Image = global::Technoguyfication.IMGEditor.GUI.Properties.Resources.page_add;
 			this.addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-			this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.addFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+			this.addFilesToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.addFilesToolStripMenuItem.Text = "&Add Files...";
 			// 
 			// viewHelpToolStripMenuItem
