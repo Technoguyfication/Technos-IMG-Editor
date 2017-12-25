@@ -118,5 +118,17 @@ namespace Technoguyfication.IMGEditor.GUI.Properties {
                 this["openFileFilterIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".")]
+        public string extractFileLastDirectory {
+            get {
+                return ((string)(this["extractFileLastDirectory"]));
+            }
+            set {
+                this["extractFileLastDirectory"] = value;
+            }
+        }
     }
 }

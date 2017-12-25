@@ -68,18 +68,20 @@ namespace Technoguyfication.IMGEditor
 				throw new IOException("The file specified already exists.");
 
 			// open file streams
-			var outputStream = File.Create(outputPath);
-			outputStream.SetLength(0);
-			var inputStream = archive.OpenFile(fileName);
+			using (var outputStream = File.Create(outputPath))
+			{
+				outputStream.SetLength(0);
+				var inputStream = archive.OpenFile(fileName);
 
-			// write data to file
-			byte[] buffer = new byte[inputStream.Length];
+				// write data to file
+				byte[] buffer = new byte[inputStream.Length];
 
-			inputStream.Read(buffer, 0, buffer.Length);
-			outputStream.Write(buffer, 0, buffer.Length);
+				inputStream.Read(buffer, 0, buffer.Length);
+				outputStream.Write(buffer, 0, buffer.Length);
 
-			// finish
-			outputStream.Flush();
+				// finish
+				outputStream.Flush();
+			}
 		}
 
 		/// <summary>

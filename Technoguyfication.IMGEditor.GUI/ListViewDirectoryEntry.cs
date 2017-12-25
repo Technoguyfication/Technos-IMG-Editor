@@ -11,8 +11,11 @@ namespace Technoguyfication.IMGEditor.GUI
 {
 	class ListViewDirectoryEntry : ListViewItem
 	{
+		public IDirectoryEntry Entry { get; private set; }
+
 		public ListViewDirectoryEntry(IDirectoryEntry entry) : base()
 		{
+			Entry = entry;
 			Text = entry.Name;
 
 			// set icon

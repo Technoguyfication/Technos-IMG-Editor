@@ -15,6 +15,7 @@ namespace Technoguyfication.IMGEditor.GUI
 	{
 		private string _openedArchivePath = null;
 		private List<ListViewDirectoryEntry> _entries = new List<ListViewDirectoryEntry>();
+		private const string FileFilter = "IMG Archives (*.img, *.dir)|*.img|All files (*.*)|*.*";
 
 		/// <summary>
 		/// Tells whether or not the application has an archive opened.
@@ -37,7 +38,7 @@ namespace Technoguyfication.IMGEditor.GUI
 			// format title
 			Text = string.Format(Text, Application.ProductVersion);
 
-			// set view mode
+			// set icon size
 			fileListView.View = Properties.Settings.Default.fileListViewMode;
 
 		}
@@ -92,7 +93,7 @@ namespace Technoguyfication.IMGEditor.GUI
 				InitialDirectory = Properties.Settings.Default.openFileLastDirectory,
 				CheckFileExists = true,
 				CheckPathExists = true,
-				Filter = "IMG Archives (*.img, *.dir)|*.img|All files (*.*)|*.*",
+				Filter = FileFilter,
 				FilterIndex = Properties.Settings.Default.openFileFilterIndex
 			})
 			{
@@ -104,6 +105,7 @@ namespace Technoguyfication.IMGEditor.GUI
 				// save last used settings
 				Properties.Settings.Default.openFileLastDirectory = Path.GetDirectoryName(dialog.FileName);
 				Properties.Settings.Default.openFileFilterIndex = dialog.FilterIndex;
+				Properties.Settings.Default.Save();
 
 				OpenArchive(dialog.FileName);
 			}
@@ -166,6 +168,8 @@ namespace Technoguyfication.IMGEditor.GUI
 		private void SetListViewMode(View view)
 		{
 			Properties.Settings.Default.fileListViewMode = view;
+			Properties.Settings.Default.Save();
+
 			fileListView.View = view;
 		}
 
@@ -176,9 +180,48 @@ namespace Technoguyfication.IMGEditor.GUI
 		/// <param name="order"></param>
 		private void SetListViewSorting(SortMethod? method = null, SortOrder? order = null)
 		{
-			if (method != null)
-			{
+			throw new NotImplementedException();
+		}
 
+		/// <summary>
+		/// Prompts the user to extract the files that are currently selected, or all of them
+		/// </summary>
+		private void ExtractFiles(bool extractAll)
+		{
+			if (!IsArchiveOpened)
+				return;
+
+			// are we extracting a single file?
+			if (!extractAll && fileListView.SelectedIndices.Count == 1)
+			{
+				// get file entry
+				var entry = _entries[fileListView.SelectedIndices[0]].Entry;
+
+				// show save dialog
+				using (var dialog = new SaveFileDialog()
+				{
+					Filter = "All files (*.*)|*.*",
+					CheckPathExists = true,
+					OverwritePrompt = true,
+					InitialDirectory = Properties.Settings.Default.extractFileLastDirectory,
+					FileName = entry.Name
+				})
+				{
+					DialogResult result = dialog.ShowDialog();
+
+					if (result != DialogResult.OK)
+						return;
+
+					// extract the file
+					using (var archive = GetArchive(_openedArchivePath))
+					{
+						IMGUtility.ExtractFile(archive, Path.GetFileName(dialog.FileName), Path.GetDirectoryName(dialog.FileName), true);
+					}
+
+					// save the last directory
+					Properties.Settings.Default.extractFileLastDirectory = Path.GetDirectoryName(dialog.FileName);
+					Properties.Settings.Default.Save();
+				}
 			}
 		}
 
@@ -288,7 +331,7 @@ namespace Technoguyfication.IMGEditor.GUI
 			closeToolStripMenuItem.Enabled = IsArchiveOpened;
 
 			// extract and add buttons
-			extractToolStripMenuItem.Enabled = (IsArchiveOpened && fileListView.SelectedIndices.Count > 0);	// items must be selected for this one
+			extractToolStripMenuItem.Enabled = (IsArchiveOpened && fileListView.SelectedIndices.Count > 0); // items must be selected for this one
 
 			extractAlllToolStripMenuItem.Enabled =
 				addFilesToolStripMenuItem.Enabled = IsArchiveOpened;
@@ -298,6 +341,29 @@ namespace Technoguyfication.IMGEditor.GUI
 		{
 			// archive info
 			archiveInfoToolStripMenuItem.Enabled = IsArchiveOpened;
+		}
+
+		private void ExtractToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ExtractFiles(false);
+		}
+
+		private void ExtractAlllToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ExtractFiles(true);
+		}
+
+		private void FileListView_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
+		{
+			int result = _entries.GetRange(e.StartIndex, (_entries.Count - e.StartIndex)).FindIndex((entry) =>
+			{
+				if (e.IsPrefixSearch)
+					return entry.Name.StartsWith(e.Text);
+				else return entry.Name.Equals(e.Text, StringComparison.OrdinalIgnoreCase);
+			});
+
+			if (result > -1)
+				e.Index = result;
 		}
 	}
 }
