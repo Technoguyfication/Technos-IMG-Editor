@@ -8,6 +8,8 @@ namespace Technoguyfication.IMGEditor.GUI
 {
 	static class Program
 	{
+		public const string PROGRAM_TITLE = "IMG Editor";
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>

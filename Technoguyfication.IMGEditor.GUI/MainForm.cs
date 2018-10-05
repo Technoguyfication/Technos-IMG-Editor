@@ -137,19 +137,19 @@ namespace Technoguyfication.IMGEditor.GUI
 			// file not found
 			catch (FileNotFoundException)
 			{
-				MessageBox.Show($"The file \"{filePath}\" could not be found.", "IMG Editor", MessageBoxButtons.OK);
+				MessageBox.Show($"The file \"{filePath}\" could not be found.", Program.PROGRAM_TITLE, MessageBoxButtons.OK);
 				return null;
 			}
 			// invalid archive
 			catch (InvalidArchiveException ex)
 			{
-				MessageBox.Show(ex.Message, "IMG Editor", MessageBoxButtons.OK);
+				MessageBox.Show(ex.Message, Program.PROGRAM_TITLE, MessageBoxButtons.OK);
 				return null;
 			}
 			// probably in use by something else
 			catch (IOException ex)
 			{
-				if (MessageBox.Show(ex.Message, "IMG Editor", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+				if (MessageBox.Show(ex.Message, Program.PROGRAM_TITLE, MessageBoxButtons.RetryCancel) == DialogResult.Retry)
 					return GetArchive(filePath);
 
 				return null;
@@ -271,7 +271,7 @@ namespace Technoguyfication.IMGEditor.GUI
 							// check if file exists
 							if (fileNames.Contains(fileName))
 							{
-								DialogResult result = MessageBox.Show($"Overwite file \"{fileName}\"?", "IMGEditor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+								DialogResult result = MessageBox.Show($"Overwite file \"{fileName}\"?", Program.PROGRAM_TITLE, MessageBoxButtons.YesNoCancel, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
 								if (result == DialogResult.Cancel)
 									return;
 								else if (result == DialogResult.No)
@@ -364,6 +364,38 @@ namespace Technoguyfication.IMGEditor.GUI
 
 			if (result > -1)
 				e.Index = result;
+		}
+
+		private void RebuildArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!IsArchiveOpened)
+				return;
+
+			var result = MessageBox.Show("Rebuilding (or defragmenting) an archive can take a very long time. Once the process is started, it cannot be stopped.\n\n" +
+				"Would you like to continue?", Program.PROGRAM_TITLE, MessageBoxButtons.YesNo);
+
+			if (result != DialogResult.Yes)
+				return;
+
+			var rebuildForm = new RebuildForm();
+
+			Task rebuildTask = new Task(() =>
+			{
+				var archive = GetArchive(_openedArchivePath);
+
+				// defragment archive
+				archive.Defragment(new Progress<ProgressUpdate>(progress =>
+				{
+				// update progress window
+				rebuildForm.UpdateProgress(progress);
+				}));
+
+				// close modal dialog
+				rebuildForm.Invoke(new Action(() => { rebuildForm.Close(); }));
+			});
+
+			rebuildTask.Start();
+			rebuildForm.ShowDialog();
 		}
 	}
 }
