@@ -31,6 +31,7 @@
 			this.rebuildProgressBar = new System.Windows.Forms.ProgressBar();
 			this.rebuildingInfoLabel = new System.Windows.Forms.Label();
 			this.rebuildingProgressLabel = new System.Windows.Forms.Label();
+			this.cancelButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// rebuildProgressBar
@@ -60,12 +61,23 @@
 			this.rebuildingProgressLabel.TabIndex = 1;
 			this.rebuildingProgressLabel.Text = "Rebuilding files: %s of %s.";
 			// 
+			// cancelButton
+			// 
+			this.cancelButton.Location = new System.Drawing.Point(244, 39);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Size = new System.Drawing.Size(75, 23);
+			this.cancelButton.TabIndex = 2;
+			this.cancelButton.Text = "Cancel";
+			this.cancelButton.UseVisualStyleBackColor = true;
+			this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+			// 
 			// RebuildForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(331, 105);
 			this.ControlBox = false;
+			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.rebuildingProgressLabel);
 			this.Controls.Add(this.rebuildingInfoLabel);
 			this.Controls.Add(this.rebuildProgressBar);
@@ -85,5 +97,6 @@
 		private System.Windows.Forms.ProgressBar rebuildProgressBar;
 		private System.Windows.Forms.Label rebuildingInfoLabel;
 		private System.Windows.Forms.Label rebuildingProgressLabel;
+		private System.Windows.Forms.Button cancelButton;
 	}
 }

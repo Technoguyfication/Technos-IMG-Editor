@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Technoguyfication.IMGEditor;
+using System.Threading;
 
 namespace Technoguyfication.IMGEditor.Version2
 {
@@ -375,7 +376,7 @@ namespace Technoguyfication.IMGEditor.Version2
 		/// <summary>
 		/// <see cref="IIMGArchive.Defragment(IProgress{ProgressUpdate})"/>
 		/// </summary>
-		public void Defragment(IProgress<ProgressUpdate> progress = null)
+		public void Defragment(IProgress<ProgressUpdate> progress = null, CancellationToken ct = null)
 		{
 			lock (_fileStream)
 			{

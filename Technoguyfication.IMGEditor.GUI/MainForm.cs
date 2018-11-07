@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace Technoguyfication.IMGEditor.GUI
 {
@@ -371,13 +372,14 @@ namespace Technoguyfication.IMGEditor.GUI
 			if (!IsArchiveOpened)
 				return;
 
-			var result = MessageBox.Show("Rebuilding (or defragmenting) an archive can take a very long time. Once the process is started, it cannot be stopped.\n\n" +
+			var result = MessageBox.Show("Rebuilding (or defragmenting) an archive can take a very long time, while having negligible benefits. Please only proceed if you know what you're doing.\n\n" +
 				"Would you like to continue?", Program.PROGRAM_TITLE, MessageBoxButtons.YesNo);
 
 			if (result != DialogResult.Yes)
 				return;
 
 			var rebuildForm = new RebuildForm();
+			var cts = new CancellationTokenSource();
 
 			Task rebuildTask = new Task(() =>
 			{
@@ -392,7 +394,12 @@ namespace Technoguyfication.IMGEditor.GUI
 
 				// close modal dialog
 				rebuildForm.Invoke(new Action(() => { rebuildForm.Close(); }));
-			});
+			}, cts.Token);
+
+			rebuildForm.Cancelled += () =>
+			{
+				cts.Cancel();
+			};
 
 			rebuildTask.Start();
 			rebuildForm.ShowDialog();

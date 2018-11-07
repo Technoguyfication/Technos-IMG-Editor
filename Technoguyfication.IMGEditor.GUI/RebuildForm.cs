@@ -12,6 +12,9 @@ namespace Technoguyfication.IMGEditor.GUI
 {
 	public partial class RebuildForm : Form
 	{
+		public delegate void CancelledEventHandler();
+		public event CancelledEventHandler Cancelled;
+
 		public RebuildForm()
 		{
 			InitializeComponent();
@@ -28,6 +31,12 @@ namespace Technoguyfication.IMGEditor.GUI
 			rebuildingProgressLabel.Text = $"Rebuilt {progress.Value} of {progress.MaxValue} files in archive.";
 			rebuildProgressBar.Maximum = progress.MaxValue;
 			rebuildProgressBar.Value = progress.Value;
+		}
+
+		private void CancelButton_Click(object sender, EventArgs e)
+		{
+			Cancelled.Invoke();
+			Close();
 		}
 	}
 }
