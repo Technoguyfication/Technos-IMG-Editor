@@ -40,7 +40,6 @@ namespace Technoguyfication.IMGEditor.GUI
 
 			// set icon size
 			fileListView.View = Properties.Settings.Default.fileListViewMode;
-
 		}
 
 		private void FileListView_RetreiveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
