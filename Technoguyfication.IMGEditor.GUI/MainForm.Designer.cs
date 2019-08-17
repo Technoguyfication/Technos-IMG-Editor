@@ -297,6 +297,7 @@
 			this.rebuildArchiveToolStripMenuItem.Name = "rebuildArchiveToolStripMenuItem";
 			this.rebuildArchiveToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
 			this.rebuildArchiveToolStripMenuItem.Text = "Rebuild Archive...";
+			this.rebuildArchiveToolStripMenuItem.Click += new System.EventHandler(this.RebuildArchiveToolStripMenuItem_Click);
 			// 
 			// archiveInfoToolStripMenuItem
 			// 
